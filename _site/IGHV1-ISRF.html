@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Science in a Box - IGHV1-ISRF</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./IGHV4-EITI.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="index.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html" rel="" target="">
+ <span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./IGH.html" rel="" target="" aria-current="page">
+ <span class="menu-text">IGH</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./IGHV1-ISRF.html">IGHV4</a></li><li class="breadcrumb-item"><a href="./IGHV1-ISRF.html">IGHV1-ISRF</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./IGH.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IGH</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./genotype.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">genotype</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./novel_allele.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">novel allele</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./challenging_ASCs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">challenging ASCs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./problems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">AIRRseq genoic disagreement</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">IGHV1</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./IGHV4-EITI.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IGHV4-EITI</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">IGHV4</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./IGHV1-ISRF.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">IGHV1-ISRF</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#allele-appearnces" id="toc-allele-appearnces" class="nav-link active" data-scroll-target="#allele-appearnces">Allele Appearnces</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">IGHV1-ISRF</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="allele-appearnces" class="level2">
+<h2 class="anchored" data-anchor-id="allele-appearnces">Allele Appearnces</h2>
+<p>The ASC IGHV1-ISRF includes 16 alleles in the reference, 6 of them found in the genotype of at least one subject.<br> No novel alleles were found for this ASC.</p>
+<p>For each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="htmlwidget-56ff23d00a3d8fdb48a3" style="width:100%;height:650px;" class="plotly html-widget "></div>
+<script type="application/json" data-for="htmlwidget-56ff23d00a3d8fdb48a3">{"x":{"data":[{"x":[1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,6,6,6,6,6,6,6,6,6,6,6,6,6],"y":[0.00481728717913426,0.00149055311606172,0.00376278118609407,0.00265946565197823,0.00747559274755927,0.00340548340548341,0.00166805671392827,0.0284343469978127,0.0029005357934174,0.00678936605316973,0.00744641076769691,0.0132872985980331,0.00494754411063424,0.0160988659769407,0.00771680548750612,0.00973034399488624,0.0099601593625498,0.0127090301003344,0.00564040263797293,0.01220780642689,0.0211138310893513,0.00763794390061894,0.0110109421237355,0.00814551690347869,0.0287792874719161,0.00753988035892323,0.0187898089171975,0.00999819309763296,0.0122146153150164,0.00394558382310633,0.012402004883691,0.0254010695187166,0.0109414579228821,0.00294314381270903,0.00468587296077751,0.00323570432357043,0.012153062900312,0.00360750360750361,0.0150198178151728,0.0101621308627678,0.00895738456434539,0.0108460626351398,0.00530519790176443,0.00521967859931774,0.00769199296264474],"hoverinfo":"y","type":"box","fillcolor":"rgba(255,255,255,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"},"size":5.66929133858268},"line":{"color":"rgba(51,51,51,1)","width":1.88976377952756},"showlegend":false,"xaxis":"x","yaxis":"y","frame":null},{"x":[1.10416947770864,1.19740609060973,1.00525784939528,1.05821651127189,2.06817344045267,1.87152104163542,2.03494061995298,2.13820534301922,1.93546677371487,2.17779642576352,2.03275024490431,1.86751316711307,2.0747973876074,1.90134250568226,2.87847277196124,2.94923648834229,2.81042865458876,3.919121430628,4.13853976326063,3.87662717169151,4.15909045785665,4.15334777906537,3.80942865209654,4.13323949845508,4.02751901624724,4.09549429900944,4.12417420893908,4.14842008408159,4.14140571281314,3.85129990903661,3.86268522376195,4.90169978458434,5.83037260072306,6.06004963871092,5.95930071072653,6.07329561524093,5.83345594378188,5.82810890330002,6.14163129944354,5.83190884655342,5.96291731037199,6.06034407876432,5.86593971205875,6.16066247541457,6.13553984109312],"y":[0.004816210563612,0.00149126176382844,0.0037607901016235,0.0026574433590035,0.00747391196972466,0.00340426284712481,0.00167052165414576,0.0284360847756412,0.00290120918521141,0.00678848662165365,0.00744712118183107,0.0132889313476946,0.00494783241613457,0.0160993700526992,0.00771651885538483,0.00972869093866957,0.00995822267936436,0.0127069079140713,0.00564291430196531,0.012209607128993,0.0211138613306112,0.00764006351600514,0.0110089871025195,0.00814822172646822,0.0287796855496736,0.00753777612430432,0.0187918543980957,0.00999848698581852,0.0122141829704244,0.00394614779399018,0.0124035048083221,0.0254005027741569,0.010939234673678,0.00294498253814342,0.00468654429249415,0.00323462699515358,0.0121524134350589,0.0036102083850833,0.0150199222956239,0.0101622591201755,0.00895896900871261,0.0108434729358976,0.0053057632670431,0.00522081504879239,0.0076937156567222],"text":["imgt_call: IGHV1-ISRF*03<br />frac_allele: 0.004817287<br /><\/br>genotyped_allele :  03 <\/br>Subject:  RPs18 <\/br>lk:  26.2465720535331 <\/br>in_genomic :  yes <\/br>alleles:  08,03,15,04 <\/br>counts :  142,81,2,1 <\/br>genotyped_alleles :  08,03<br />in_genomic: yes","imgt_call: IGHV1-ISRF*03<br />frac_allele: 0.001490553<br /><\/br>genotyped_allele :  03 <\/br>Subject:  RQp17 <\/br>lk:  9.51549105762231 <\/br>in_genomic :  yes <\/br>alleles:  04,03 <\/br>counts :  45,31 <\/br>genotyped_alleles :  04,03<br />in_genomic: yes","imgt_call: IGHV1-ISRF*03<br />frac_allele: 0.003762781<br /><\/br>genotyped_allele :  03 <\/br>Subject:  RRb11 <\/br>lk:  13.650071547092 <\/br>in_genomic :  yes <\/br>alleles:  04,03,15 <\/br>counts :  109,59,6 <\/br>genotyped_alleles :  04,03<br />in_genomic: yes","imgt_call: IGHV1-ISRF*03<br />frac_allele: 0.002659466<br /><\/br>genotyped_allele :  03 <\/br>Subject:  RVb16 <\/br>lk:  3.32817236964308 <\/br>in_genomic :  yes <\/br>alleles:  15,03,08,04 <\/br>counts :  80,40,9,6 <\/br>genotyped_alleles :  15,03<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.007475593<br /><\/br>genotyped_allele :  04 <\/br>Subject:  REk15 <\/br>lk:  12.6151148459935 <\/br>in_genomic :  yes <\/br>alleles:  04,15 <\/br>counts :  61,37 <\/br>genotyped_alleles :  04,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.003405483<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RFr13 <\/br>lk:  22.0493092641939 <\/br>in_genomic :  yes <\/br>alleles:  04,15 <\/br>counts :  98,91 <\/br>genotyped_alleles :  04,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.001668057<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RMr18 <\/br>lk:  5.33031386441985 <\/br>in_genomic :  yes <\/br>alleles:  08,04 <\/br>counts :  25,18 <\/br>genotyped_alleles :  08,04<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.028434347<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RNo15 <\/br>lk:  120.803486316759 <\/br>in_genomic :  yes <\/br>alleles:  04,15 <\/br>counts :  559,1 <\/br>genotyped_alleles :  04<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.002900536<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RQp17 <\/br>lk:  9.51549105762231 <\/br>in_genomic :  yes <\/br>alleles:  04,03 <\/br>counts :  45,31 <\/br>genotyped_alleles :  04,03<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.006789366<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RRb11 <\/br>lk:  13.650071547092 <\/br>in_genomic :  yes <\/br>alleles:  04,03,15 <\/br>counts :  109,59,6 <\/br>genotyped_alleles :  04,03<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.007446411<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RRb19 <\/br>lk:  38.4072215252956 <\/br>in_genomic :  yes <\/br>alleles:  04,08,10 <\/br>counts :  205,179,5 <\/br>genotyped_alleles :  04,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.013287299<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RSq16 <\/br>lk:  60.813865049582 <\/br>in_genomic :  yes <\/br>alleles:  04,15 <\/br>counts :  286,203 <\/br>genotyped_alleles :  04,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.004947544<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RTt13 <\/br>lk:  11.2819226443166 <\/br>in_genomic :  yes <\/br>alleles:  15,04 <\/br>counts :  50,47 <\/br>genotyped_alleles :  15,04<br />in_genomic: yes","imgt_call: IGHV1-ISRF*04<br />frac_allele: 0.016098866<br /><\/br>genotyped_allele :  04 <\/br>Subject:  RVe17 <\/br>lk:  82.7495646337249 <\/br>in_genomic :  yes <\/br>alleles:  04,07 <\/br>counts :  402,237 <\/br>genotyped_alleles :  04,07<br />in_genomic: yes","imgt_call: IGHV1-ISRF*07<br />frac_allele: 0.007716805<br /><\/br>genotyped_allele :  07 <\/br>Subject:  RPz16 <\/br>lk:  38.7681450796441 <\/br>in_genomic :  yes <\/br>alleles:  07,08,10 <\/br>counts :  192,175,3 <\/br>genotyped_alleles :  07,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*07<br />frac_allele: 0.009730344<br /><\/br>genotyped_allele :  07 <\/br>Subject:  RVe17 <\/br>lk:  82.7495646337249 <\/br>in_genomic :  yes <\/br>alleles:  04,07 <\/br>counts :  402,237 <\/br>genotyped_alleles :  04,07<br />in_genomic: yes","imgt_call: IGHV1-ISRF*07<br />frac_allele: 0.009960159<br /><\/br>genotyped_allele :  07 <\/br>Subject:  RWc20 <\/br>lk:  39.2480784593911 <\/br>in_genomic :  yes <\/br>alleles:  08,07,10 <\/br>counts :  224,211,8 <\/br>genotyped_alleles :  08,07<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.012709030<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RDq15 <\/br>lk:  6.70415582428279 <\/br>in_genomic :  yes <\/br>alleles:  08,15,10 <\/br>counts :  51,13,2 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.005640403<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RDr15 <\/br>lk:  6.82054249221932 <\/br>in_genomic :  yes <\/br>alleles:  08,15 <\/br>counts :  32,23 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.012207806<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RFj17 <\/br>lk:  58.2131110261081 <\/br>in_genomic :  yes <\/br>alleles:  15,08,10 <\/br>counts :  310,259,7 <\/br>genotyped_alleles :  15,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.021113831<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RIy10 <\/br>lk:  63.5052384604488 <\/br>in_genomic :  yes <\/br>alleles:  08,10 <\/br>counts :  371,11 <\/br>genotyped_alleles :  08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.007637944<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RMr18 <\/br>lk:  5.33031386441985 <\/br>in_genomic :  yes <\/br>alleles:  08,04 <\/br>counts :  25,18 <\/br>genotyped_alleles :  08,04<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.011010942<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RPs18 <\/br>lk:  26.2465720535331 <\/br>in_genomic :  yes <\/br>alleles:  08,03,15,04 <\/br>counts :  142,81,2,1 <\/br>genotyped_alleles :  08,03<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.008145517<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RPz16 <\/br>lk:  38.7681450796441 <\/br>in_genomic :  yes <\/br>alleles:  07,08,10 <\/br>counts :  192,175,3 <\/br>genotyped_alleles :  07,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.028779287<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RRb17 <\/br>lk:  98.2222045392873 <\/br>in_genomic :  yes <\/br>alleles:  08,10 <\/br>counts :  640,26 <\/br>genotyped_alleles :  08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.007539880<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RRb19 <\/br>lk:  38.4072215252956 <\/br>in_genomic :  yes <\/br>alleles:  04,08,10 <\/br>counts :  205,179,5 <\/br>genotyped_alleles :  04,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.018789809<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RRr14 <\/br>lk:  58.0965647738478 <\/br>in_genomic :  yes <\/br>alleles:  08,15,10 <\/br>counts :  350,260,12 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.009998193<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RRv14 <\/br>lk:  11.8050053765033 <\/br>in_genomic :  yes <\/br>alleles:  08,10,04 <\/br>counts :  76,3,1 <\/br>genotyped_alleles :  08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.012214615<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RSb17 <\/br>lk:  38.5987038887369 <\/br>in_genomic :  yes <\/br>alleles:  08,15,10 <\/br>counts :  214,205,7 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.003945584<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RUg16 <\/br>lk:  18.0771653461944 <\/br>in_genomic :  yes <\/br>alleles:  15,08,10 <\/br>counts :  93,61,1 <\/br>genotyped_alleles :  15,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*08<br />frac_allele: 0.012402005<br /><\/br>genotyped_allele :  08 <\/br>Subject:  RWc20 <\/br>lk:  39.2480784593911 <\/br>in_genomic :  yes <\/br>alleles:  08,07,10 <\/br>counts :  224,211,8 <\/br>genotyped_alleles :  08,07<br />in_genomic: yes","imgt_call: IGHV1-ISRF*13<br />frac_allele: 0.025401070<br /><\/br>genotyped_allele :  13 <\/br>Subject:  RBc20 <\/br>lk:  93.2867953212907 <\/br>in_genomic :  yes <\/br>alleles:  13,15,08,04 <\/br>counts :  508,225,5,3 <\/br>genotyped_alleles :  13,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.010941458<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RBc20 <\/br>lk:  93.2867953212907 <\/br>in_genomic :  yes <\/br>alleles:  13,15,08,04 <\/br>counts :  508,225,5,3 <\/br>genotyped_alleles :  13,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.002943144<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RDq15 <\/br>lk:  6.70415582428279 <\/br>in_genomic :  yes <\/br>alleles:  08,15,10 <\/br>counts :  51,13,2 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.004685873<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RDr15 <\/br>lk:  6.82054249221932 <\/br>in_genomic :  yes <\/br>alleles:  08,15 <\/br>counts :  32,23 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.003235704<br /><\/br>genotyped_allele :  15 <\/br>Subject:  REk15 <\/br>lk:  12.6151148459935 <\/br>in_genomic :  yes <\/br>alleles:  04,15 <\/br>counts :  61,37 <\/br>genotyped_alleles :  04,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.012153063<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RFj17 <\/br>lk:  58.2131110261081 <\/br>in_genomic :  yes <\/br>alleles:  15,08,10 <\/br>counts :  310,259,7 <\/br>genotyped_alleles :  15,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.003607504<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RFr13 <\/br>lk:  22.0493092641939 <\/br>in_genomic :  yes <\/br>alleles:  04,15 <\/br>counts :  98,91 <\/br>genotyped_alleles :  04,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.015019818<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RJv17 <\/br>lk:  50.5870454563033 <\/br>in_genomic :  yes <\/br>alleles:  15 <\/br>counts :  231 <\/br>genotyped_alleles :  15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.010162131<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RRr14 <\/br>lk:  58.0965647738478 <\/br>in_genomic :  yes <\/br>alleles:  08,15,10 <\/br>counts :  350,260,12 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.008957385<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RSb17 <\/br>lk:  38.5987038887369 <\/br>in_genomic :  yes <\/br>alleles:  08,15,10 <\/br>counts :  214,205,7 <\/br>genotyped_alleles :  08,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.010846063<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RSq16 <\/br>lk:  60.813865049582 <\/br>in_genomic :  yes <\/br>alleles:  04,15 <\/br>counts :  286,203 <\/br>genotyped_alleles :  04,15<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.005305198<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RTt13 <\/br>lk:  11.2819226443166 <\/br>in_genomic :  yes <\/br>alleles:  15,04 <\/br>counts :  50,47 <\/br>genotyped_alleles :  15,04<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.005219679<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RUg16 <\/br>lk:  18.0771653461944 <\/br>in_genomic :  yes <\/br>alleles:  15,08,10 <\/br>counts :  93,61,1 <\/br>genotyped_alleles :  15,08<br />in_genomic: yes","imgt_call: IGHV1-ISRF*15<br />frac_allele: 0.007691993<br /><\/br>genotyped_allele :  15 <\/br>Subject:  RVb16 <\/br>lk:  3.32817236964308 <\/br>in_genomic :  yes <\/br>alleles:  15,03,08,04 <\/br>counts :  80,40,9,6 <\/br>genotyped_alleles :  15,03<br />in_genomic: yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,139,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,0,139,1)"}},"hoveron":"points","name":"yes","legendgroup":"yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9,0.9],"base":[0,0,0,0,0,0],"x":[1,2,3,4,5,6],"y":[4,10,3,14,1,13],"text":["count:  4<br />imgt_call: IGHV1-ISRF*03","count: 10<br />imgt_call: IGHV1-ISRF*04","count:  3<br />imgt_call: IGHV1-ISRF*07","count: 14<br />imgt_call: IGHV1-ISRF*08","count:  1<br />imgt_call: IGHV1-ISRF*13","count: 13<br />imgt_call: IGHV1-ISRF*15"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x2","yaxis":"y2","hoverinfo":"text","frame":null}],"layout":{"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,6.6],"tickmode":"array","ticktext":["IGHV1-ISRF*03","IGHV1-ISRF*04","IGHV1-ISRF*07","IGHV1-ISRF*08","IGHV1-ISRF*13","IGHV1-ISRF*15"],"tickvals":[1,2,3,4,5,6],"categoryorder":"array","categoryarray":["IGHV1-ISRF*03","IGHV1-ISRF*04","IGHV1-ISRF*07","IGHV1-ISRF*08","IGHV1-ISRF*13","IGHV1-ISRF*15"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":false,"tickfont":{"color":null,"family":null,"size":0},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","hoverformat":".2f"},"xaxis2":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,6.6],"tickmode":"array","ticktext":["IGHV1-ISRF*03","IGHV1-ISRF*04","IGHV1-ISRF*07","IGHV1-ISRF*08","IGHV1-ISRF*13","IGHV1-ISRF*15"],"tickvals":[1,2,3,4,5,6],"categoryorder":"array","categoryarray":["IGHV1-ISRF*03","IGHV1-ISRF*04","IGHV1-ISRF*07","IGHV1-ISRF*08","IGHV1-ISRF*13","IGHV1-ISRF*15"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y2","hoverformat":".2f"},"yaxis2":{"domain":[0,0.493],"automargin":true,"type":"linear","autorange":false,"range":[-0.7,14.7],"tickmode":"array","ticktext":["0","5","10"],"tickvals":[0,5,10],"categoryorder":"array","categoryarray":["0","5","10"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x2","hoverformat":".2f"},"yaxis":{"domain":[0.507,1],"automargin":true,"type":"linear","autorange":false,"range":[0.000126096494381122,0.0301441421713542],"tickmode":"array","ticktext":["0.01","0.02","0.03"],"tickvals":[0.01,0.02,0.03],"categoryorder":"array","categoryarray":["0.01","0.02","0.03"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","hoverformat":".2f"},"annotations":[],"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0.507,"y1":1},{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":0.493}],"images":[],"margin":{"t":23.3059360730594,"r":7.30593607305936,"b":115.898713158987,"l":42.8393524283935},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"in_genomic","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","width":800,"height":600,"barmode":"relative","autosize":false},"attrs":{"1d641e6a5aa3":{"x":{},"y":{},"text":{},"type":"box"},"1d641ec63221":{"x":{},"y":{},"text":{},"colour":{}},"1d6472c6af9":{"x":{},"type":"bar"}},"source":"A","config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>The graph below shows the allele-based individual genotype inference for this allele group.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-146e04d95d957645e559" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-146e04d95d957645e559">{"x":{"data":[{"type":"scatter","mode":"markers","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y3","frame":null},{"type":"scatter","mode":"markers","marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x2","yaxis":"y2","frame":null},{"x":[null,null,null,null,null,null,null,null],"y":[2,2,null,4,4,null,6,6],"text":"","type":"scatter","mode":"lines","line":{"width":26.4566929133858,"color":"rgba(242,242,242,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x3","yaxis":"y","hoverinfo":"text","frame":null},{"x":[null,null,null,null,null,null,null,null],"y":[1,1,null,3,3,null,5,5],"text":"","type":"scatter","mode":"lines","line":{"width":26.4566929133858,"color":"rgba(255,255,255,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x3","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"h","width":[0.6,0.6,0.6,0.6,0.6,0.6],"base":[-4,-10,-3,-14,-1,-13],"x":[4,10,3,14,1,13],"y":[3,4,2,6,1,5],"text":"","type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x3","yaxis":"y","hoverinfo":"text","frame":null},{"x":[12,6,6,11,2,2,5,10,5,2,2,9,4,4,1,1,1,3,3,1,3,1,1,8,7],"y":[0.0158282293028697,0.00439108890947911,0.0105521472392638,0.010351458614623,0.0107112970711297,0.00701298701298701,0.00930600061454721,0.0284343469978127,0.0149862911266201,0.0241333612331729,0.0102527420123987,0.025829209971827,0.0158623223909848,0.0223621642462408,0.0156521739130435,0.0103262755987504,0.0243608693272021,0.0211138310893513,0.0287792874719161,0.0289519397799653,0.00999819309763296,0.0211719998793618,0.00916526242242407,0.0363425274415986,0.0150198178151728],"hoverinfo":"y","type":"box","fillcolor":"rgba(242,242,242,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"},"size":5.66929133858268},"line":{"color":"rgba(0,0,0,1)","width":1.88976377952756},"showlegend":false,"xaxis":"x4","yaxis":"y6","frame":null},{"x":[12.0017947687581,5.95362444145605,5.98245783995837,11.0463444994017,1.90043263252825,1.93410478794947,4.94588732551783,9.94535321589559,5.02779903387651,1.98312116611749,2.03639736007899,9.01625706061721,3.90724215570837,4.02302207326516,0.965931994002312,0.982914260402322,0.892456797305495,2.94340264018625,2.97570977540687,1.08067219441757,3.08753309419379,1.02768458005041,1.06602637514472,7.96533648593351,6.97740399328992],"y":[0.0158282293028697,0.00439108890947911,0.0105521472392638,0.010351458614623,0.0107112970711297,0.00701298701298701,0.00930600061454721,0.0284343469978127,0.0149862911266201,0.0241333612331729,0.0102527420123987,0.025829209971827,0.0158623223909848,0.0223621642462408,0.0156521739130435,0.0103262755987504,0.0243608693272021,0.0211138310893513,0.0287792874719161,0.0289519397799653,0.00999819309763296,0.0211719998793618,0.00916526242242407,0.0363425274415986,0.0150198178151728],"text":["<\/br>Subject:  RPs18 <\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*08 <\/br>Frequency:  0.0158282293028697","<\/br>Subject:  RQp17 <\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*04 <\/br>Frequency:  0.00439108890947911","<\/br>Subject:  RRb11 <\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*04 <\/br>Frequency:  0.0105521472392638","<\/br>Subject:  RVb16 <\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*15 <\/br>Frequency:  0.010351458614623","<\/br>Subject:  REk15 <\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*15 <\/br>Frequency:  0.0107112970711297","<\/br>Subject:  RFr13 <\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*15 <\/br>Frequency:  0.00701298701298701","<\/br>Subject:  RMr18 <\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*08 <\/br>Frequency:  0.00930600061454721","<\/br>Subject:  RNo15 <\/br>Alleles:  IGHV1-ISRF*04 <\/br>Frequency:  0.0284343469978127","<\/br>Subject:  RRb19 <\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*08 <\/br>Frequency:  0.0149862911266201","<\/br>Subject:  RSq16 <\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*15 <\/br>Frequency:  0.0241333612331729","<\/br>Subject:  RTt13 <\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*15 <\/br>Frequency:  0.0102527420123987","<\/br>Subject:  RVe17 <\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*07 <\/br>Frequency:  0.025829209971827","<\/br>Subject:  RPz16 <\/br>Alleles:  IGHV1-ISRF*07,IGHV1-ISRF*08 <\/br>Frequency:  0.0158623223909848","<\/br>Subject:  RWc20 <\/br>Alleles:  IGHV1-ISRF*07,IGHV1-ISRF*08 <\/br>Frequency:  0.0223621642462408","<\/br>Subject:  RDq15 <\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15 <\/br>Frequency:  0.0156521739130435","<\/br>Subject:  RDr15 <\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15 <\/br>Frequency:  0.0103262755987504","<\/br>Subject:  RFj17 <\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15 <\/br>Frequency:  0.0243608693272021","<\/br>Subject:  RIy10 <\/br>Alleles:  IGHV1-ISRF*08 <\/br>Frequency:  0.0211138310893513","<\/br>Subject:  RRb17 <\/br>Alleles:  IGHV1-ISRF*08 <\/br>Frequency:  0.0287792874719161","<\/br>Subject:  RRr14 <\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15 <\/br>Frequency:  0.0289519397799653","<\/br>Subject:  RRv14 <\/br>Alleles:  IGHV1-ISRF*08 <\/br>Frequency:  0.00999819309763296","<\/br>Subject:  RSb17 <\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15 <\/br>Frequency:  0.0211719998793618","<\/br>Subject:  RUg16 <\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15 <\/br>Frequency:  0.00916526242242407","<\/br>Subject:  RBc20 <\/br>Alleles:  IGHV1-ISRF*13,IGHV1-ISRF*15 <\/br>Frequency:  0.0363425274415986","<\/br>Subject:  RJv17 <\/br>Alleles:  IGHV1-ISRF*15 <\/br>Frequency:  0.0150198178151728"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":0.65,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x4","yaxis":"y6","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.899999999999999,0.899999999999999,0.899999999999999,0.899999999999999,0.9,0.9,0.9,0.9,0.9,0.899999999999999,0.9],"base":[0,0,0,0,0,0,0,0,0,0,0,0],"x":[6,12,11,10,9,5,2,4,3,1,8,7],"y":[2,1,1,1,1,2,4,2,3,6,1,1],"text":["<\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*04","<\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*15","<\/br>Alleles:  IGHV1-ISRF*04","<\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*07","<\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*15","<\/br>Alleles:  IGHV1-ISRF*07,IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15","<\/br>Alleles:  IGHV1-ISRF*13,IGHV1-ISRF*15","<\/br>Alleles:  IGHV1-ISRF*15"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(89,89,89,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x5","yaxis":"y5","hoverinfo":"text","frame":null},{"x":[12,6,11,2,5,10,9,4,3,8,7],"y":[1,2,1,4,2,1,1,2,3,1,1],"text":[1,2,1,4,2,1,1,2,3,1,1],"hovertext":["<\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*04","<\/br>Alleles:  IGHV1-ISRF*03,IGHV1-ISRF*15","<\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*15","<\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*04","<\/br>Alleles:  IGHV1-ISRF*04,IGHV1-ISRF*07","<\/br>Alleles:  IGHV1-ISRF*07,IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*08","<\/br>Alleles:  IGHV1-ISRF*13,IGHV1-ISRF*15","<\/br>Alleles:  IGHV1-ISRF*15"],"textfont":{"size":14.6645669291339,"color":"rgba(0,0,0,1)"},"type":"scatter","mode":"text","hoveron":"points","name":"on_background","legendgroup":"on_background","showlegend":true,"xaxis":"x5","yaxis":"y5","hoverinfo":"text","frame":null},{"x":[1],"y":[5.1],"text":6,"hovertext":"<\/br>Alleles:  IGHV1-ISRF*08,IGHV1-ISRF*15","textfont":{"size":14.6645669291339,"color":"rgba(255,255,255,1)"},"type":"scatter","mode":"text","hoveron":"points","name":"on_bar","legendgroup":"on_bar","showlegend":true,"xaxis":"x5","yaxis":"y5","hoverinfo":"text","frame":null},{"visible":false,"showlegend":false,"xaxis":"x5","yaxis":"y5","hoverinfo":"text","frame":null},{"x":[null,null,null,null,null,null,null,null],"y":[2,2,null,4,4,null,6,6],"text":"-Inf: -Inf","type":"scatter","mode":"lines","line":{"width":26.4566929133858,"color":"rgba(242,242,242,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x6","yaxis":"y4","hoverinfo":"text","frame":null},{"x":[null,null,null,null,null,null,null,null],"y":[1,1,null,3,3,null,5,5],"text":"-Inf: -Inf","type":"scatter","mode":"lines","line":{"width":26.4566929133858,"color":"rgba(255,255,255,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x6","yaxis":"y4","hoverinfo":"text","frame":null},{"x":[12,12,12,12,12,12,11,11,11,11,11,11,10,10,10,10,10,10,9,9,9,9,9,9,8,8,8,8,8,8,7,7,7,7,7,7,6,6,6,6,6,6,5,5,5,5,5,5,4,4,4,4,4,4,3,3,3,3,3,3,2,2,2,2,2,2,1,1,1,1,1,1],"y":[1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6],"text":["intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":["rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(0,0,0,1)"],"opacity":1,"size":13.2283464566929,"symbol":"circle","line":{"width":1.88976377952756,"color":["rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(0,0,0,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(179,179,179,1)","rgba(0,0,0,1)","rgba(0,0,0,1)"]}},"hoveron":"points","showlegend":false,"xaxis":"x6","yaxis":"y4","hoverinfo":"text","frame":null},{"x":[12,12,12,12,11,11,11,11,10,10,10,10,10,9,9,9,9,8,8,8,8,7,7,7,7,7,6,6,6,6,5,5,5,5,4,4,4,4,3,3,3,3,3,2,2,2,2,1,1,1,1],"y":[1,2,4,5,1,2,4,6,1,2,3,5,6,1,3,5,6,2,3,4,6,1,2,3,4,6,1,2,5,6,1,2,3,5,1,3,4,5,1,2,3,4,5,1,2,3,6,1,2,3,4],"text":["intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(217,217,217,1)","opacity":1,"size":11.3385826771654,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(217,217,217,1)"}},"hoveron":"points","name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x6","yaxis":"y4","hoverinfo":"text","frame":null},{"x":[12,12,11,11,10,9,9,8,8,7,6,6,5,5,4,4,3,2,2,1,1],"y":[3,6,3,5,4,2,4,1,5,5,3,4,4,6,2,6,6,4,5,5,6],"text":["intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":11.3385826771654,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"hoveron":"points","name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x6","yaxis":"y4","hoverinfo":"text","frame":null},{"x":[12,12,null,12,12,null,12,12,null,12,12,null,12,12,null,12,12,null,11,11,null,11,11,null,11,11,null,11,11,null,11,11,null,11,11,null,10,10,null,10,10,null,10,10,null,10,10,null,10,10,null,10,10,null,9,9,null,9,9,null,9,9,null,9,9,null,9,9,null,9,9,null,8,8,null,8,8,null,8,8,null,8,8,null,8,8,null,8,8,null,7,7,null,7,7,null,7,7,null,7,7,null,7,7,null,7,7,null,6,6,null,6,6,null,6,6,null,6,6,null,6,6,null,6,6,null,5,5,null,5,5,null,5,5,null,5,5,null,5,5,null,5,5,null,4,4,null,4,4,null,4,4,null,4,4,null,4,4,null,4,4,null,3,3,null,3,3,null,3,3,null,3,3,null,3,3,null,3,3,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,2,2,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1,null,1,1],"y":[3,6,null,3,6,null,3,6,null,3,6,null,3,6,null,3,6,null,3,5,null,3,5,null,3,5,null,3,5,null,3,5,null,3,5,null,4,4,null,4,4,null,4,4,null,4,4,null,4,4,null,4,4,null,2,4,null,2,4,null,2,4,null,2,4,null,2,4,null,2,4,null,1,5,null,1,5,null,1,5,null,1,5,null,1,5,null,1,5,null,5,5,null,5,5,null,5,5,null,5,5,null,5,5,null,5,5,null,3,4,null,3,4,null,3,4,null,3,4,null,3,4,null,3,4,null,4,6,null,4,6,null,4,6,null,4,6,null,4,6,null,4,6,null,2,6,null,2,6,null,2,6,null,2,6,null,2,6,null,2,6,null,6,6,null,6,6,null,6,6,null,6,6,null,6,6,null,6,6,null,4,5,null,4,5,null,4,5,null,4,5,null,4,5,null,4,5,null,5,6,null,5,6,null,5,6,null,5,6,null,5,6,null,5,6],"text":["intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*08","intersection: IGHV1_ISRF*03-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*15","intersection: IGHV1_ISRF*03-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*04","intersection: IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*07","intersection: IGHV1_ISRF*04-IGHV1_ISRF*07",null,"intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*13-IGHV1_ISRF*15","intersection: IGHV1_ISRF*13-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*15","intersection: IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*03-IGHV1_ISRF*04","intersection: IGHV1_ISRF*03-IGHV1_ISRF*04",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*08","intersection: IGHV1_ISRF*04-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*07-IGHV1_ISRF*08","intersection: IGHV1_ISRF*07-IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*08","intersection: IGHV1_ISRF*08",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*04-IGHV1_ISRF*15","intersection: IGHV1_ISRF*04-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15",null,"intersection: IGHV1_ISRF*08-IGHV1_ISRF*15","intersection: IGHV1_ISRF*08-IGHV1_ISRF*15"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x6","yaxis":"y4","hoverinfo":"text","frame":null}],"layout":{"xaxis":{"domain":[0,0.29],"automargin":true,"showticklabels":false,"showgrid":false,"zeroline":false,"anchor":"y3"},"xaxis2":{"domain":[0,0.29],"automargin":true,"showticklabels":false,"showgrid":false,"zeroline":false,"anchor":"y2"},"xaxis3":{"domain":[0,0.29],"automargin":true,"type":"linear","autorange":false,"range":[-14.7,0.7],"tickmode":"array","ticktext":["0","5","10"],"tickvals":[0,-5,-10],"categoryorder":"array","categoryarray":["0","5","10"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","hoverformat":".2f"},"xaxis4":{"domain":[0.51,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,12.6],"tickmode":"array","ticktext":["IGHV1_ISRF*08-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*15","IGHV1_ISRF*08","IGHV1_ISRF*07-IGHV1_ISRF*08","IGHV1_ISRF*04-IGHV1_ISRF*08","IGHV1_ISRF*03-IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*13-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*07","IGHV1_ISRF*04","IGHV1_ISRF*03-IGHV1_ISRF*15","IGHV1_ISRF*03-IGHV1_ISRF*08"],"tickvals":[1,2,3,4,5,6,7,8,9,10,11,12],"categoryorder":"array","categoryarray":["IGHV1_ISRF*08-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*15","IGHV1_ISRF*08","IGHV1_ISRF*07-IGHV1_ISRF*08","IGHV1_ISRF*04-IGHV1_ISRF*08","IGHV1_ISRF*03-IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*13-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*07","IGHV1_ISRF*04","IGHV1_ISRF*03-IGHV1_ISRF*15","IGHV1_ISRF*03-IGHV1_ISRF*08"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":false,"tickfont":{"color":null,"family":null,"size":0},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y6","hoverformat":".2f"},"xaxis5":{"domain":[0.51,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,12.6],"tickmode":"array","ticktext":["IGHV1_ISRF*08-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*15","IGHV1_ISRF*08","IGHV1_ISRF*07-IGHV1_ISRF*08","IGHV1_ISRF*04-IGHV1_ISRF*08","IGHV1_ISRF*03-IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*13-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*07","IGHV1_ISRF*04","IGHV1_ISRF*03-IGHV1_ISRF*15","IGHV1_ISRF*03-IGHV1_ISRF*08"],"tickvals":[1,2,3,4,5,6,7,8,9,10,11,12],"categoryorder":"array","categoryarray":["IGHV1_ISRF*08-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*15","IGHV1_ISRF*08","IGHV1_ISRF*07-IGHV1_ISRF*08","IGHV1_ISRF*04-IGHV1_ISRF*08","IGHV1_ISRF*03-IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*13-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*07","IGHV1_ISRF*04","IGHV1_ISRF*03-IGHV1_ISRF*15","IGHV1_ISRF*03-IGHV1_ISRF*08"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":false,"tickfont":{"color":null,"family":null,"size":0},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y5","hoverformat":".2f"},"xaxis6":{"domain":[0.51,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,12.6],"tickmode":"array","ticktext":["IGHV1_ISRF*08-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*15","IGHV1_ISRF*08","IGHV1_ISRF*07-IGHV1_ISRF*08","IGHV1_ISRF*04-IGHV1_ISRF*08","IGHV1_ISRF*03-IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*13-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*07","IGHV1_ISRF*04","IGHV1_ISRF*03-IGHV1_ISRF*15","IGHV1_ISRF*03-IGHV1_ISRF*08"],"tickvals":[1,2,3,4,5,6,7,8,9,10,11,12],"categoryorder":"array","categoryarray":["IGHV1_ISRF*08-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*15","IGHV1_ISRF*08","IGHV1_ISRF*07-IGHV1_ISRF*08","IGHV1_ISRF*04-IGHV1_ISRF*08","IGHV1_ISRF*03-IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*13-IGHV1_ISRF*15","IGHV1_ISRF*04-IGHV1_ISRF*07","IGHV1_ISRF*04","IGHV1_ISRF*03-IGHV1_ISRF*15","IGHV1_ISRF*03-IGHV1_ISRF*08"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":false,"tickfont":{"color":null,"family":null,"size":0},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y4","hoverformat":".2f"},"yaxis4":{"domain":[0,0.332633333333333],"automargin":true,"type":"linear","autorange":false,"range":[0.4,6.6],"tickmode":"array","ticktext":["IGHV1-ISRF*13","IGHV1-ISRF*07","IGHV1-ISRF*03","IGHV1-ISRF*04","IGHV1-ISRF*15","IGHV1-ISRF*08"],"tickvals":[1,2,3,4,5,6],"categoryorder":"array","categoryarray":["IGHV1-ISRF*13","IGHV1-ISRF*07","IGHV1-ISRF*03","IGHV1-ISRF*04","IGHV1-ISRF*15","IGHV1-ISRF*08"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x6","hoverformat":".2f"},"yaxis5":{"domain":[0.334033333333333,0.665966666666667],"automargin":true,"type":"linear","autorange":false,"range":[-0.3,6.3],"tickmode":"array","ticktext":["0","2","4","6"],"tickvals":[0,2,4,6],"categoryorder":"array","categoryarray":["0","2","4","6"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x5","hoverformat":".2f"},"yaxis6":{"domain":[0.667366666666667,1],"automargin":true,"type":"linear","autorange":false,"range":[0.00279351698287314,0.0379400993682046],"tickmode":"array","ticktext":["0.01","0.02","0.03"],"tickvals":[0.01,0.02,0.03],"categoryorder":"array","categoryarray":["0.01","0.02","0.03"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x4","hoverformat":".2f"},"yaxis":{"domain":[0,0.332633333333333],"automargin":true,"type":"linear","autorange":false,"range":[0.4,6.6],"tickmode":"array","ticktext":["IGHV1_ISRF*13","IGHV1_ISRF*07","IGHV1_ISRF*03","IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*08"],"tickvals":[1,2,3,4,5,6],"categoryorder":"array","categoryarray":["IGHV1_ISRF*13","IGHV1_ISRF*07","IGHV1_ISRF*03","IGHV1_ISRF*04","IGHV1_ISRF*15","IGHV1_ISRF*08"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":false,"tickfont":{"color":null,"family":null,"size":0},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x3","hoverformat":".2f"},"yaxis2":{"domain":[0.334033333333333,0.665966666666667],"automargin":true,"showticklabels":false,"showgrid":false,"zeroline":false,"anchor":"x2"},"yaxis3":{"domain":[0.667366666666667,1],"automargin":true,"showticklabels":false,"showgrid":false,"zeroline":false,"anchor":"x"},"annotations":[],"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":0.29,"y0":0,"y1":0.332633333333333},{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0.51,"x1":1,"y0":0.667366666666667,"y1":1},{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0.51,"x1":1,"y0":0.334033333333333,"y1":0.665966666666667},{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0.51,"x1":1,"y0":0,"y1":0.332633333333333}],"images":[],"margin":{"b":28.4931506849315,"l":86.9406392694064,"t":26.2283105022831,"r":7.30593607305936},"hovermode":"closest","showlegend":false,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"barmode":"relative","autosize":false,"width":800,"height":600},"attrs":{"1d64555c3a5c":{"x":{},"y":{},"yend":{},"xend":{},"type":"scatter"},"1d644a132233":{"x":{}},"1d646fd96b63":{"text":{},"x":{},"y":{},"type":"box"},"1d641c26368b":{"text":{},"x":{},"y":{}},"1d64738824d8":{"text":{},"x":{},"y":{},"type":"bar"},"1d6418996311":{"text":{},"x":{},"y":{},"label":{},"colour":{}},"1d647e7366c3":{"text":{},"x":{},"y":{}},"1d6495575d5":{"x":{},"y":{},"xend":{},"yend":{},"type":"scatter"},"1d64641f50f7":{"x":{},"y":{}},"1d6458415b33":{"x":{},"y":{},"colour":{}},"1d64277a1e67":{"x":{},"y":{},"xend":{},"yend":{}}},"source":"A","config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./IGHV4-EITI.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">IGHV4-EITI</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

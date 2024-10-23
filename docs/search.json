@@ -1,0 +1,107 @@
+[
+  {
+    "objectID": "problems.html",
+    "href": "problems.html",
+    "title": "AIRRseq genoic disagreement",
+    "section": "",
+    "text": "We identified cases where an allele appears in the repertoire but does not have an exact match in the genome. An ‘exact match’ means that Digger identified the allele as functional or as an open reading frame (ORF) without any single nucleotide polymorphisms (SNPs), or, in the case of a novel allele, with the same SNP as identified by TIgGER. For each allele exhibiting this type of discrepancy in one or more subjects, we summarized the cases pertaining to that allele:\n\nyes: Found in the repertoire and exactly matched in the assembly.\nyes didn’t pass lk: Found with low confidence (lk&lt;1) in the repertoire and exactly matched in the assembly.\nno: Found in the repertoire but didn’t exactly match in the assembly.\nno didn’t pass lk: Found with low confidence (lk&lt;1) in the repertoire but didn’t exactly match in the assembly.\n\nIn the detailed analysis, it was found that out of the 114 IGHV clusters identified in the AIRRseq genotypes, 1 were not identified with exact match in the assembly of any of the 25 subjects analyzed. 45 out of 493 IGHV alleles identified in the AIRRseq genotypes were not identified with exact match in any subject assembly. 84 were identified with exact match in the assembly of some subjects, but not in others."
+  },
+  {
+    "objectID": "IGHV4-EITI.html",
+    "href": "IGHV4-EITI.html",
+    "title": "IGHV4-EITI",
+    "section": "",
+    "text": "The ASC IGHV4-EITI includes 19 alleles on the reference, 0 of them found in the genotype. one novel allele was found for this ASC.\nFor each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele."
+  },
+  {
+    "objectID": "IGHV4-EITI.html#allele-appearnces",
+    "href": "IGHV4-EITI.html#allele-appearnces",
+    "title": "IGHV4-EITI",
+    "section": "",
+    "text": "The ASC IGHV4-EITI includes 19 alleles on the reference, 0 of them found in the genotype. one novel allele was found for this ASC.\nFor each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele."
+  },
+  {
+    "objectID": "IGHV1-ISRF.html",
+    "href": "IGHV1-ISRF.html",
+    "title": "IGHV1-ISRF",
+    "section": "",
+    "text": "The ASC IGHV1-ISRF includes 16 alleles in the reference, 0 of them found in the genotype of at least one subject. one novel allele was found for this ASC.\nFor each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele."
+  },
+  {
+    "objectID": "IGHV1-ISRF.html#allele-appearnces",
+    "href": "IGHV1-ISRF.html#allele-appearnces",
+    "title": "IGHV1-ISRF",
+    "section": "",
+    "text": "The ASC IGHV1-ISRF includes 16 alleles in the reference, 0 of them found in the genotype of at least one subject. one novel allele was found for this ASC.\nFor each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele."
+  },
+  {
+    "objectID": "genotype.html",
+    "href": "genotype.html",
+    "title": "genotype",
+    "section": "",
+    "text": "For the genotype inference we used the following conservative criteria:\n\nZero mutations within the V region.\nSingle assignment for thr V.\nStarted from the first position of the V gene.\n\nThe Piglet allele-based method was used for genotype inference based on AIRR-seq data. It compares allele usage against a population-derived threshold to determine allele inclusion in the genotype. A Z score is calculated for each allele, measuring its significance in the repertoire. The formula incorporates allele count, frequency threshold, and repertoire depth, with higher Z scores indicating a stronger likelihood of allele presence in the genotype.\nIn a detailed analysis, it was found that of the 143 existing IGHV clusters, 30 are not represented in the genotypes of the 106 subjects analyzed. 602 out of 1054 existing IGHV alleles were not found in the genotypes of the subjects.\nThere are 268 IGHV novel allele that were found in the genotypes of these 106 subjects."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "challenging_ASCs.html",
+    "href": "challenging_ASCs.html",
+    "title": "challenging ASCs",
+    "section": "",
+    "text": "The genotype inference was conducted using a Bayesian method, which accounts for up to four alleles per ASC. However, in a single organism, a genotype can rarely comprise more than four distinct alleles, when multiple gene duplications occur and the loci exhibit heterozygosity both within and between these duplications. Our current analysis suggests that, for some ASCs, the inclusion of more than four alleles per genotype may be required, as can be shown, for example, for subject RFj17 in panel B."
+  },
+  {
+    "objectID": "IGH.html",
+    "href": "IGH.html",
+    "title": "IGH",
+    "section": "",
+    "text": "IGH ASC"
+  },
+  {
+    "objectID": "IGHV1.html",
+    "href": "IGHV1.html",
+    "title": "IGHV1",
+    "section": "",
+    "text": "IGHV1-ISRF\nView"
+  },
+  {
+    "objectID": "old_jenotype.html",
+    "href": "old_jenotype.html",
+    "title": "old_genotype",
+    "section": "",
+    "text": "For the genotype inference we used the following conservative criteria:\n\nZero mutations within the V region.\nSingle assignment.\nStarted from the first position of the V gene.\n\nThe genotype inference was done using the Bayesian method that considers up to four alleles per ASC, thereby allowing for the possibility of a gene duplication with both loci being heterozygous. The method provides a confidence level (lk). lk &gt; 1 marked with black diagonal.\nIn a detailed analysis, it was found that of the 148 existing IGHV clusters, 34 are not represented in the genotypes of the 25 subjects analyzed. 639 out of 1095 existing IGHV references were not found in the genotypes of the subjects.\nThere are 37 IGHV novel allele that were found in the genotypes of these 25 subjects."
+  },
+  {
+    "objectID": "IGHV4-EITI.html#group-alignment",
+    "href": "IGHV4-EITI.html#group-alignment",
+    "title": "IGHV4-EITI",
+    "section": "Group alignment",
+    "text": "Group alignment\nBased on the viewd alleles, we calculated the distance between the germline sequences.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAllele specific cutoff\nObserving the alleles frequencies we adapted the following thresholds\n\n\n\n\n\n\n\nThe graph below shows the allele-based individual genotype inference for this allele group."
+  },
+  {
+    "objectID": "IGHV1-ISRF.html#group-alignment",
+    "href": "IGHV1-ISRF.html#group-alignment",
+    "title": "IGHV1-ISRF",
+    "section": "Group alignment",
+    "text": "Group alignment\nBased on the viewd alleles, we calculated the distance between the germline sequences.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAllele specific cutoff\nObserving the alleles frequencies we adapted the following thresholds\n\n\n\n\n\n\n\nThe graph below shows the allele-based individual genotype inference for this allele group."
+  },
+  {
+    "objectID": "IGL.html",
+    "href": "IGL.html",
+    "title": "IGL",
+    "section": "",
+    "text": "IGL ASC"
+  },
+  {
+    "objectID": "IGK.html",
+    "href": "IGK.html",
+    "title": "IGK",
+    "section": "",
+    "text": "IGK ASC"
+  }
+]

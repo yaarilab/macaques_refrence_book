@@ -1,0 +1,46 @@
+---
+title: 'IGHV1'
+execute:
+  echo: false
+  warning: false
+  message: false
+format: html
+---
+```{r echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+```
+
+
+```{r echo=FALSE, echo=FALSE, results='hide', warning=FALSE}
+# Step 1: List .qmd files
+# List all files with the .qmd extension in the IGHV1 directory
+files <- list.files(path = "IGHV1", pattern = "\\.qmd$", full.names = TRUE)
+
+
+# Step 2 and 3: Render .qmd files to HTML and add to list
+
+for (file in files) {
+rmarkdown::render(file, clean=TRUE, output_format="html_document", output_dir="IGHV1")
+  
+}
+```
+
+```{r list-html-in-table, results='asis'}
+# Step 3: List the newly created HTML files in a Markdown table
+
+# Assuming the HTML files are named similarly to the QMD files but with .html extension
+html_files <- sub(".qmd$", ".html", files)
+
+# Start the table
+cat("|    <center>ASC</center>    |    <center>report</center>    |\n")
+cat("|:--------------------------:|:----------------------------:|\n")
+
+# Fill the table
+for (i in seq_along(html_files)) {
+  ASC = sub(".qmd", "", files[i])
+  ASC = sub("IGHV1/", "", ASC)
+    cat("|", ASC , "|", sprintf("[View](./%s)", html_files[i]), "|\n")
+
+}
+```

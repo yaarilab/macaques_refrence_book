@@ -1,0 +1,16 @@
+{
+  "hash": "7a66b2c8897517f701387a2eb2f862d2",
+  "result": {
+    "markdown": "---\ntitle: \"genotype\"\nexecute:\n  echo: false\n  warning: false\n  message: false\nformat: html\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n\n\nFor the genotype inference we used the following conservative criteria:\n\n- Zero mutations within the V region.\n- Single assignment for thr V.\n- Started from the first position of the V gene.\n\n\nThe Piglet allele-based method was used for genotype inference based on AIRR-seq data. It compares allele usage against a population-derived threshold to determine allele inclusion in the genotype. A Z score is calculated for each allele, measuring its significance in the repertoire. The formula incorporates allele count, frequency threshold, and repertoire depth, with higher Z scores indicating a stronger likelihood of allele presence in the genotype.\n\nIn a detailed analysis, it was found that of the 143 existing IGHV clusters, 30 are not represented in the genotypes of the 106 subjects analyzed. 602 out of 1054 existing IGHV alleles were not found in the genotypes of the subjects.\n\nThere are 268 IGHV novel allele that were found in the genotypes of these 106 subjects.\n\n\n\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n",
+    "supporting": [
+      "genotype_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,113 @@
+---
+title: 'IGHV1-ISRF'
+execute:
+  echo: false
+  warning: false
+  message: false
+format: html
+---
+
+```{r}
+source("functions.R")
+
+```
+
+```{r,echo=FALSE}
+imgt_genes = 'IGHV1-ISRF'
+
+
+alleles_on_ref=gene_sequence_names[grepl(imgt_genes, gene_sequence_names)]
+length_alleles_on_ref=length(alleles_on_ref)
+allele_on_genotype = unique(data_[grepl(imgt_genes, data_$allele), "allele"])
+novel_allele_on_genotype = setdiff(allele_on_genotype,alleles_on_ref)
+length_novel_allele_on_genotype = length(novel_allele_on_genotype)
+length_allele_on_genotype = length(setdiff(allele_on_genotype,novel_allele_on_genotype) )
+
+```
+
+
+
+```{r}
+novel = ""
+
+if(length_novel_allele_on_genotype == 0){
+  novel = "No novel alleles were found for this ASC."
+} else if(length_novel_allele_on_genotype == 1){
+  novel = "one novel allele was found for this ASC."
+}else {
+   novel = paste0(length_novel_allele_on_genotype, " novel alleles were found for this ASC.")
+}
+```
+
+
+## Allele Appearnces
+
+The ASC `r imgt_genes` includes `r length_alleles_on_ref` alleles in the reference, `r length_allele_on_genotype` of them found in the genotype of at least one subject.<br>
+`r novel`
+
+For each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele. 
+
+```{r fig.width = 10, fig.height = 10}
+allele_appearance(data_, imgt_genes)%>%
+  layout(
+    autosize = F,
+    width = 800,
+    height = 600
+  )
+```
+
+## Group alignment
+
+Based on the viewd alleles, we calculated the distance between the germline sequences.
+
+
+```{r fig.width = 10, fig.height = 10}
+seq_align(data_, imgt_genes)
+```
+
+
+
+```{r fig.width = 10, fig.height = 10}
+tagList(seq_align2(data_, imgt_genes))
+```
+
+
+```{r fig.width = 10, fig.height = 7}
+plot_seqlogo(data_, imgt_genes)%>%
+  layout(
+    autosize = F,
+    width = 10000,
+    height = 400 
+  )
+```
+
+
+
+### Allele specific cutoff
+
+Observing the alleles frequencies we adapted the following thresholds
+
+```{r fig.width = 10, fig.height = 10}
+library(DT)
+
+# Create a data frame with ordered alleles
+ordered_data <- optimized_thresholds[optimized_thresholds$gene == imgt_genes, c("allele", "threshold")]
+ordered_data <- ordered_data[order(ordered_data$allele), ]  # Order by allele
+
+# Create the datatable
+DT::datatable(ordered_data)
+
+```
+
+
+
+The graph below shows the allele-based individual genotype inference for this allele group.
+
+```{r fig.width = 10, fig.height = 10}
+heatmap_alleles(data_, imgt_genes) %>%
+  layout(
+    autosize = F,
+    width = 800,
+    height = 600
+  )
+```
