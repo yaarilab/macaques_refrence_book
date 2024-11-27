@@ -1,4 +1,125 @@
 ---
-title: "refrence_web"
+title: "The bag of allele"
+execute:
+  echo: false
+  warning: false
+  message: false
+format: html
 ---
 
+```{r}
+source("functions.R")
+library(dplyr)
+library(plotly)
+library(gridExtra)
+```
+
+```{r ,echo=FALSE}
+
+# Create the hierarchical data
+hierarchical_data <- bind_rows(
+  # Level 1: Chain
+  bag_data %>%
+    group_by(chain) %>%
+    summarize(value = n()) %>%
+    mutate(level = "Chain", category = chain, parent = ""),
+  
+  # Level 2: Gene Type
+  bag_data %>%
+    group_by(chain, gene_type) %>%
+    summarize(value = n()) %>%
+    mutate(level = "Gene Type", category = gene_type, parent = chain),
+  
+  # Level 3: Family
+  bag_data %>%
+    group_by(gene_type, Family) %>%
+    summarize(value = n()) %>%
+    mutate(level = "Family", category = Family, parent = gene_type),
+  
+  # Level 4: ASC
+  bag_data %>%
+    group_by(Family, ASC) %>%
+    summarize(value = n()) %>%
+    mutate(level = "ASC", category = ASC, parent = Family),
+  
+  # Level 5: Allele
+  bag_data %>%
+    group_by(ASC, allele) %>%
+    summarize(value = n()) %>%
+    mutate(level = "Allele", category = allele, parent = ASC)
+)
+```
+
+
+```{R}
+  
+  # Function to create a sunburst plot for a specific gene type
+create_sunburst_plot <- function(data, gene_type) {
+  hierarchical_data <- bind_rows(
+    # Level 1: Family
+    data %>%
+      filter(gene_type == gene_type) %>%
+      group_by(Family) %>%
+      summarize(value = n()) %>%
+      mutate(level = "Family", category = Family, parent = ""),
+    
+    # Level 2: ASC
+    data %>%
+      filter(gene_type == gene_type) %>%
+      group_by(Family, ASC) %>%
+      summarize(value = n()) %>%
+      mutate(level = "ASC", category = ASC, parent = Family),
+    
+    # Level 3: Allele
+    data %>%
+      filter(gene_type == gene_type) %>%
+      group_by(ASC, allele) %>%
+      summarize(value = n(), sample_count_genomic = sum(sample_count_genomic), sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""]))) %>%
+      mutate(
+        level = "Allele", 
+        category = allele,  # Only allele name in the label
+        parent = ASC,
+        hover_text = paste0(allele, "<br> Different RSS: ", value, "<br>Genomic sample count: ", sample_count_genomic, "<br>AIRRseq sample count: ", sample_count_AIRRseq) # Detailed hover text
+      )
+  )
+  
+  plot <- plot_ly(
+    data = hierarchical_data,
+    type = "sunburst",
+    labels = ~category,         # Display only the allele name
+    parents = ~parent,
+    values = ~value,
+    textinfo = "label",         # Show only the label on the plot
+    hoverinfo = "text",         # Use custom hover text
+    hovertext = ~hover_text,    # Detailed hover text
+    branchvalues = "total"
+  ) %>%
+    layout(title = gene_type)
+  
+  return(plot)
+}
+
+# Create sunburst plots for each gene type
+plot_IGHV <- create_sunburst_plot(bag_data[grepl("IGHV",bag_data$allele),], "IGHV")
+plot_IGLV <- create_sunburst_plot(bag_data[grepl("IGLV",bag_data$allele),], "IGLV")
+plot_IGKV <- create_sunburst_plot(bag_data[grepl("IGKV",bag_data$allele),], "IGKV")
+plot_IGHD <- create_sunburst_plot(bag_data[grepl("IGHD",bag_data$allele),], "IGHD")
+plot_IGHJ <- create_sunburst_plot(bag_data[grepl("IGHJ",bag_data$allele),], "IGHJ")
+plot_IGKJ <- create_sunburst_plot(bag_data[grepl("IGKJ",bag_data$allele),], "IGKJ")
+plot_IGLJ <- create_sunburst_plot(bag_data[grepl("IGLJ",bag_data$allele),], "IGLJ")
+
+```
+
+
+```{r fig.width = 10, fig.height = 10}
+crosstalk::bscols(plot_IGHV, plot_IGHD)
+```
+
+```{r fig.width = 10, fig.height = 10}
+crosstalk::bscols(plot_IGKV, plot_IGLV)
+```
+
+```{r fig.width = 10, fig.height = 10}
+
+crosstalk::bscols(plot_IGHJ,plot_IGKJ, plot_IGLJ)
+```

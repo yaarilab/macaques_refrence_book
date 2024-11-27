@@ -15,73 +15,60 @@ source("functions.R")
 ```{r,echo=FALSE}
 imgt_genes = 'IGHV1-ISRF'
 
-
-alleles_on_ref=gene_sequence_names[grepl(imgt_genes, gene_sequence_names)]
+imgt_bag_data <- bag_data[grepl(imgt_genes,bag_data$allele),]
+alleles_on_bag=unique(imgt_bag_data$allele)
+length_alleles_on_bag=length(alleles_on_bag)
+alleles_on_ref = alleles_on_bag[!grepl("_",alleles_on_bag)]
 length_alleles_on_ref=length(alleles_on_ref)
-allele_on_genotype = unique(data_[grepl(imgt_genes, data_$allele), "allele"])
+alleles_no_on_ref=bag_data[!grepl("_",bag_data$allele),]
+length_alleles_no_on_ref_novel_airrseq = length(imgt_bag_data[imgt_bag_data$sample_count_genomic == 0 & grepl("_",imgt_bag_data$allele) ,"allele"])
+length_alleles_no_on_ref_novel_genomic = length(imgt_bag_data[imgt_bag_data$sample_count_genomic > 0 & grepl("_",imgt_bag_data$allele) ,"allele"])
+allele_on_genotype = unique(imgt_bag_data[imgt_bag_data$sample_count_AIRRseq > 0, "allele"])
 novel_allele_on_genotype = setdiff(allele_on_genotype,alleles_on_ref)
 length_novel_allele_on_genotype = length(novel_allele_on_genotype)
 length_allele_on_genotype = length(setdiff(allele_on_genotype,novel_allele_on_genotype) )
 
 ```
 
-
-
 ```{r}
 novel = ""
 
-if(length_novel_allele_on_genotype == 0){
-  novel = "No novel alleles were found for this ASC."
-} else if(length_novel_allele_on_genotype == 1){
-  novel = "one novel allele was found for this ASC."
+if(length_alleles_no_on_ref_novel_airrseq == 0){
+  novel = "No novel alleles were found in the AIRRseq data only"
+} else if(length_alleles_no_on_ref_novel_airrseq == 1){
+  novel = "one novel allele was found in the AIRRseq data only"
 }else {
-   novel = paste0(length_novel_allele_on_genotype, " novel alleles were found for this ASC.")
+   novel = paste0(length_alleles_no_on_ref_novel_airrseq, " novel alleles were found in the AIRRseq data only")
 }
 ```
 
+```{r}
+gen_novel = ""
 
-## Allele Appearnces
-
-The ASC `r imgt_genes` includes `r length_alleles_on_ref` alleles in the reference, `r length_allele_on_genotype` of them found in the genotype of at least one subject.<br>
-`r novel`
-
-For each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele. 
-
-```{r fig.width = 10, fig.height = 10}
-allele_appearance(data_, imgt_genes)%>%
-  layout(
-    autosize = F,
-    width = 800,
-    height = 600
-  )
+if(length_alleles_no_on_ref_novel_genomic == 0){
+  gen_novel = "No novel alleles were found in the genomic data"
+} else if(length_alleles_no_on_ref_novel_genomic == 1){
+  gen_novel = "one novel allele was found in the genomic data"
+}else {
+   gen_novel = paste0(length_novel_allele_on_genotype, " novel alleles were found in the genomic data")
+}
 ```
+
+## 
+
+The ASC `r imgt_genes` includes `r length_alleles_on_bag` alleles in the bag of alleles, `r length_alleles_on_ref` alleles was in the baseline. `r gen_novel` , `r novel` .<br>`r length_allele_on_genotype` allele from the bag was found in the genotype of at least one subject.
 
 ## Group alignment
 
 Based on the viewd alleles, we calculated the distance between the germline sequences.
 
-
 ```{r fig.width = 10, fig.height = 10}
 seq_align(data_, imgt_genes)
 ```
 
-
-
-```{r fig.width = 10, fig.height = 10}
+```{r fig.width = 12, fig.height = 10}
 tagList(seq_align2(data_, imgt_genes))
 ```
-
-
-```{r fig.width = 10, fig.height = 7}
-plot_seqlogo(data_, imgt_genes)%>%
-  layout(
-    autosize = F,
-    width = 10000,
-    height = 400 
-  )
-```
-
-
 
 ### Allele specific cutoff
 
@@ -99,11 +86,44 @@ DT::datatable(ordered_data)
 
 ```
 
+## Allele Appearnces
 
+For each allele, we counted the number of appearances across the population and its usage in the repertoire of each subject that has this allele.
+
+```{r}
+# Step 1: Extract alleles from bag_data
+alleles_bag <- unique(imgt_bag_data$allele)
+
+# Step 2: Identify alleles in bag_data but not in data_
+missing_alleles <- setdiff(alleles_bag, data_$allele)
+
+# Step 3: Create a template for missing_data with all columns in data_
+missing_data <- data.frame(allele = missing_alleles, stringsAsFactors = FALSE)
+
+# Step 4: Dynamically add all columns from data_ with default values
+for (col in setdiff(names(data_), "allele")) {
+  missing_data[[col]] <- if (col == "gene") {
+    imgt_genes
+  } else if (col %in% c("frac", "frac_allele")) {
+    0
+  } else {
+    NA
+  }
+}
+
+data1 <- rbind(data_, missing_data)
+data1 <- data1 %>%
+  arrange(allele)
+```
+
+```{r fig.width = 10, fig.height = 10}
+allele_appearance(data1, imgt_genes)%>%   layout(     autosize = F,     width = 800,     height = 700    )
+```
 
 The graph below shows the allele-based individual genotype inference for this allele group.
 
 ```{r fig.width = 10, fig.height = 10}
+
 heatmap_alleles(data_, imgt_genes) %>%
   layout(
     autosize = F,

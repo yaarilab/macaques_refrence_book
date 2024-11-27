@@ -28,12 +28,14 @@ website:
       
       - id: Overview
         title: "Overview"
+        contents:
+          - href: index.qmd
+          - genotype.qmd
 
       - id: IGH
         title: "IGH"
         contents:
           - href: IGH.qmd
-          - genotype.qmd
           - section: "IGHV"
             contents:
               - section: "IGHV1"

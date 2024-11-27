@@ -5,19 +5,22 @@ pacman::p_load('dplyr', 'tidyr', 'htmltools', 'bbplot', 'scales', 'data.table', 
                'plotly', "jcolors", 'ggdendro', "RColorBrewer","kmer","heatmaply", "ggseqlogo", "stringr", install = F)
 
 
-load("2024-03-20_allele_igh_names.rda")
-#load("15_4_data_web.rda")
 
-
-IGH_df <- read.csv("22_10_IGH_allele_reference_table.csv")
-IGL_df <- read.csv("22_10_IGL_allele_reference_table.csv")
-IGK_df <- read.csv("22_10_IGK_allele_reference_table.csv")
+IGH_df <- read.csv("26_11_IGH_allele_reference_table.csv")
+IGL_df <- read.csv("26_11_IGL_allele_reference_table.csv")
+IGK_df <- read.csv("26_11_IGK_allele_reference_table.csv")
 bag_data <- bind_rows(IGH_df, IGL_df, IGK_df)
+#bag_data <- bag_data %>%mutate(gene = str_extract(allele, "[^*]+"))
+
 bag_data <- bag_data %>%
-  mutate(gene = str_extract(allele, "[^*]+"))
+  mutate(gene = str_extract(allele, "[^*]+"),
+         ASC = sub("\\*.*", "", allele),
+         Family = sub("-.*", "", allele),
+         chain = substr(allele, 1, 3))
 
 optimized_thresholds <- fread("optimized_thresholds.tsv")
-data_ <- fread("actual_df.csv")
+
+data_ <- fread("filter_25_11_rep_data.csv")
 data_[, frac := count / sum_count]
 data_[, frac_allele := count / sum_count]
 
@@ -32,10 +35,24 @@ allele_appearance <- function(data_, imgt_genes, chain = "IGH") {
   height = ifelse(length(height)<20, 25, height)
   height = height*30
   
-  p <- ggplot(data_, aes(imgt_call)) + 
-    geom_bar() +
-    scale_x_discrete(drop=FALSE) +
-    labs(x = "allele", y = "# Individuals", fill = "") + theme_minimal() +
+
+  count_data <- data_ %>%
+    group_by(imgt_call) %>%
+    summarise(count = sum(!is.na(subject))) # Count non-NA subjects per allele
+
+  # Replace any `NA` in `imgt_call` with "0" for plotting
+  count_data$imgt_call <- ifelse(is.na(count_data$imgt_call), "0", count_data$imgt_call)
+
+  # Ensure all alleles (even with 0 counts) are retained for plotting
+  count_data <- count_data %>%
+    complete(imgt_call, fill = list(count = 0)) 
+
+  # Plot the processed data
+  p <- ggplot(count_data, aes(x = imgt_call, y = count)) + 
+    geom_bar(stat = "identity") +  # Use stat = "identity" to plot the precomputed counts
+    scale_x_discrete(drop = FALSE) +
+    labs(x = "allele", y = "# Individuals", fill = "") + 
+    theme_minimal() +
     theme(
       legend.position = "bottom",
       axis.text.x = element_text(
@@ -45,8 +62,10 @@ allele_appearance <- function(data_, imgt_genes, chain = "IGH") {
       ),
       axis.text.y = element_text(
         size = 10
-      ), axis.title = element_text(size = 14)
+      ), 
+      axis.title = element_text(size = 14)
     )
+    
   
   p1<-ggplotly(p, height = height, width = height)
   
@@ -137,53 +156,9 @@ heatmap_alleles <-
   }
 
 
-  
-plot_seqlogo <- function(data_, imgt_genes, chain = "IGH") {
-
-  data_ <- data_[grepl(imgt_genes, data_$gene),]
-  
-  alleles <- data_$allele
-  data_$imgt_call <- data_$allele
-
-  seqs <- unique(data_$v_ref)
-  # Remove any sequences that are NA or empty
-  cleaned_seqs <- seqs[seqs != "" & !is.na(seqs)]
-  
-  # If sequences are empty or invalid, replace them with a default sequence
-  if (length(cleaned_seqs) == 0) {
-    cleaned_seqs <- rep("N", 12)  # Replace with 12 "N" bases
-  }
-  
-  # If all sequences are identical, skip plotting
-  if (length(unique(cleaned_seqs)) == 1) {
-    return(NULL)  # Skip the plot if all sequences are identical
-  }
-  
-  # Pad sequences so they all have the same length
-  max_len <- max(nchar(cleaned_seqs), na.rm = TRUE)
-  
-  cleaned_seqs <- sapply(cleaned_seqs, function(seq) {
-    pad_len <- max_len - nchar(seq)
-    if (pad_len > 0) {
-      return(paste0(seq, strrep("N", pad_len)))  # Pad with "N" to match max length
-    } else {
-      return(seq)
-    }
-  })
-  
-  # Convert the cleaned sequences back to a character vector (sapply returns a list)
-  cleaned_seqs <- as.character(cleaned_seqs)
-  
-  p <- ggseqlogo(cleaned_seqs, method = "prob", col_scheme = "nucleotide")
-  
-  # Now all sequences are the same length, generate the sequence logo using the nucleotide color scheme
-  return(ggplotly(p))
-}
-
-
 seq_align <- function(data_, imgt_genes, chain = "IGH") {   
 data_ <- data_[grepl(imgt_genes, data_$gene),]
-  sequences <- unique(data_$v_ref)
+  sequences <- unique(data_$ref)
   alleles <- unique(data_$allele)  # Assuming you have an allele column in your data
   # Remove any sequences that are NA or empty
   cleaned_seqs <- sequences[sequences != "" & !is.na(sequences)]
@@ -277,7 +252,7 @@ data_ <- data_[grepl(imgt_genes, data_$gene),]
 seq_align2 <-function(data_, imgt_genes, chain = "IGH") {    
 
   data_ <- data_[grepl(imgt_genes, data_$gene),]
-  sequences <- unique(data_$v_ref)
+  sequences <- unique(data_$ref)
   alleles <- unique(data_$allele)  # Assuming you have an allele column in your data
   # Remove any sequences that are NA or empty
   cleaned_seqs <- sequences[sequences != "" & !is.na(sequences)]

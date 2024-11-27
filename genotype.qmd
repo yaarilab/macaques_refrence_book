@@ -1,5 +1,5 @@
 ---
-title: "genotype"
+title: "Genotype inference"
 execute:
   echo: false
   warning: false
@@ -23,7 +23,6 @@ library(vdjbasevis)
 num_subjects = length(unique(data_$sample))
 
 ```
-
 
 ```{r,echo=FALSE}
 
@@ -54,120 +53,10 @@ lenght_alleles_on_genotype = length(setdiff(c(alleles_on_genotype),novel_alleles
 lenght_alleles_not_represented = lenght_alleles_on_ref - lenght_alleles_on_genotype
 ```
 
+For the genotype inference we applied a pre-genotype filter that required sequences to have no mutations within the V region, a single V allele assignment, and alignment starting from position one of the V germline. Only alleles having a threshold z Score above 0 were retained. For IGHD genotype inference, the selection was further refined by including only sequences with no mutations in the D region and a single assigned D allele. Additionally, only alleles that exceeded the z-score threshold above 4 were retained. For each allele, the median ratio of sequence length observed in the repertoire to the allele length was calculated using sequences annotated with that specific IGHD allele from subjects carrying the allele in their genotype, considering only alleles where the ratio was above 0.5.
 
-For the genotype inference we used the following conservative criteria:
-
-- Zero mutations within the V region.
-- Single assignment for thr V.
-- Started from the first position of the V gene.
-
-
-The Piglet allele-based method was used for genotype inference based on AIRR-seq data. It compares allele usage against a population-derived threshold to determine allele inclusion in the genotype. A Z score is calculated for each allele, measuring its significance in the repertoire. The formula incorporates allele count, frequency threshold, and repertoire depth, with higher Z scores indicating a stronger likelihood of allele presence in the genotype.
+The Piglet allele-based method was used for genotype inference based on AIRR-seq data. It compares allele usage against a population-derived threshold to determine allele inclusion in the genotype. A z score is calculated for each allele, measuring its significance in the repertoire. The formula incorporates allele count, frequency threshold, and repertoire depth, with higher z scores indicating a stronger likelihood of allele presence in the genotype.
 
 In a detailed analysis, it was found that of the `r lenght_ASCs_on_ref` existing IGHV clusters, `r lenght_ASCs_not_represented` are not represented in the genotypes of the `r num_subjects` subjects analyzed. `r lenght_alleles_not_represented` out of `r lenght_alleles_on_ref` existing IGHV alleles were not found in the genotypes of the subjects.
 
 There are `r length_novel_alleles_on_genotype` IGHV novel allele that were found in the genotypes of these `r num_subjects` subjects.
-
-
-
-```{r}
-allele_palette_new <-vdjbasevis:::ALLELE_PALETTE
-names(allele_palette_new) <- c("01" ,"02", "03", "04" ,"05", "06", "07","08" ,"09" ,"10", "11", "12", "13", "14", "15",
-                               "16" ,"17", "18", "19", "20" ,"21" ,"22" ,"23" ,"24", "25" ,"26", "28", "29", "31", "32","NA")
-```
-
-
-```{r}
-data_ = read.csv("actual_df.csv")
-data_ <- data_ %>%
-      group_by(gene, sample) %>%
-        mutate(n = n(), idx = row_number()) %>%
-        ungroup()
-
-
-library(stringr)
-
-data_$genotyped_allele <- sub("^[^*]*\\*", "", data_$allele)
-```
-
-
-```{r}
-df_expanded <- data_ %>%
-  mutate(subject_idx = as.numeric(factor(sample)),
-         gene_idx = as.numeric(factor(gene)))
-
-df_expanded$genotyped_allele <-as.factor(df_expanded$genotyped_allele)
-
-df_expanded<- df_expanded %>%
-  mutate(modified_allele = ifelse(grepl("_", genotyped_allele),
-                                  sub("_.*", "", genotyped_allele),
-                                  as.character(genotyped_allele)))
-
-
-unique_alleles_with_underscore <- df_expanded %>%
-  arrange(genotyped_allele)%>%
-  mutate(genotyped_allele = as.factor(genotyped_allele))%>%
-  filter(grepl("_", genotyped_allele)) %>%
-  distinct(genotyped_allele) %>%
-  mutate(underscore_number = seq_along(genotyped_allele))
-
-df_expanded <- df_expanded %>%
-  left_join(unique_alleles_with_underscore, by = "genotyped_allele") %>%
-  mutate(underscore_number = ifelse(is.na(underscore_number), NA_integer_, underscore_number))
-
-df_expanded <- df_expanded %>%
-  mutate(has_underscore = grepl("_", genotyped_allele))
-
-legend_data <- df_expanded %>%
-  distinct(genotyped_allele, underscore_number) %>%
-  mutate(legend_label = ifelse(is.na(underscore_number),
-                               as.character(genotyped_allele),
-                               as.character(paste( "^" ,underscore_number, "^" ,genotyped_allele, sep = "")))) %>%
-  arrange(genotyped_allele)
-
-
-unique_alleles <- unique(df_expanded$genotyped_allele)
-unique_modified_alleles <- unique(df_expanded$modified_allele)
-
-# Initialize allele_palette_modified with colors from allele_palette_new
-allele_palette_modified <- allele_palette_new
-
-# Loop through the unique_modified_alleles to assign colors
-for (allele in unique_alleles) {
-  if (!(allele %in% names(allele_palette_new))) {
-       allele_palette_modified[allele] <-  allele_palette_new[sub("_.*", "", allele)]
-  } else {
-    
-    allele_palette_modified[allele] <- allele_palette_new[allele]
-  }
-}
-
-```
-
-```{r}
-p<-ggplot(df_expanded, aes(xmin = subject_idx - 0.5 + (idx-1)/n, xmax = subject_idx - 0.5 + idx/n,
-                        ymin = gene_idx - 0.5, ymax = gene_idx + 0.5)) +
-  geom_rect(aes(fill = genotyped_allele, text = paste("</br>genotyped_allele : ",genotyped_allele,
-                                                      "</br>Subject: ", sample))) +
-  geom_text(data = subset(df_expanded, has_underscore), 
-            aes(x = subject_idx - 0.5 + (idx-0.5)/n, y = gene_idx, label =   paste( "^" ,underscore_number, sep = "")), 
-            vjust = 0.5, hjust = 0.5, 
-            size = 2)  +
-  scale_fill_manual(values = allele_palette_modified, name = " ",
-                    breaks = legend_data$genotyped_allele,
-                    labels = legend_data$legend_label) +
-  scale_x_continuous(breaks = df_expanded$subject_idx, labels = df_expanded$sample,
-                     expand = c(0, 0)) +  # no expansion
-  scale_y_continuous(breaks = df_expanded$gene_idx, labels = df_expanded$gene,
-                     expand = c(0, 0)) +
-  theme_minimal() +
-  geom_vline(xintercept = unique(df_expanded$subject_idx) - 0.5, color = "black", size = 0.2) +
-  geom_hline(yintercept = unique(df_expanded$gene_idx) - 0.5, color = "black", size = 0.2) +
-  labs(fill = " ", x = " ", y = " ") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5, size = 10),
-        axis.text.y = element_text(angle = 0, hjust = 0.5, size = 10),
-        legend.position = "none",
-        legend.key.size = unit(0.3, "cm"))
-
-```
-
