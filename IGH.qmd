@@ -7,4 +7,79 @@ execute:
 format: html
 ---
 
- IGH ASC
+```{r}
+source("functions.R")
+```
+
+```{r fig.width = 15, fig.height = 10}
+library(DT)
+library(dplyr)
+
+chain_bag_data <- bag_data[grepl("IGH",bag_data$allele),]
+
+chain_bag_data_subset <- chain_bag_data %>%
+  select(
+    chain, gene_type, asc, allele, seq, seq_gapped,
+    v_heptamer, v_nonamer, j_heptamer, j_nonamer,
+    d_3_heptamer, d_3_nonamer, d_5_heptamer, d_5_nonamer,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq,Family
+  )
+# Create the datatable
+#DT::datatable(chain_bag_data_subset)
+
+# Create the table with all columns, but hide additional ones
+DT::datatable(
+  chain_bag_data_subset, # Include all columns
+  options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    columnDefs = list(
+      list(visible = FALSE, targets = c(5:19)) # Hide all columns except the first four
+    )
+  ),
+  callback = JS(
+    "
+    table.on('click', 'tr', function() {
+      var tr = $(this); // Get the clicked row
+      var rowData = table.row(this).data(); // Get all data for the clicked row
+      if (tr.next().hasClass('detail-row')) {
+        // If details row already exists, remove it
+        tr.next().remove();
+      } else {
+        // Construct detailed information using all columns
+        var details = '<tr class=\"detail-row\"><td colspan=\"4\">' +
+          '<strong>Chain:</strong> ' + rowData[1] + '<br>' +
+          '<strong>Gene Type:</strong> ' + rowData[2] + '<br>' +
+          '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
+          '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
+          '<strong>Seq:</strong> ' + rowData[5] + '<br>' +
+          '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>' +
+          '<strong>V Heptamer:</strong> ' + rowData[7] + '<br>' +
+          '<strong>V Nonamer:</strong> ' + rowData[8] + '<br>' +
+          '<strong>J Heptamer:</strong> ' + rowData[9] + '<br>' +
+          '<strong>J Nonamer:</strong> ' + rowData[10] + '<br>' +
+          '<strong>D3 Heptamer:</strong> ' + rowData[11] + '<br>' +
+          '<strong>D3 Nonamer:</strong> ' + rowData[12] + '<br>' +
+          '<strong>D5 Heptamer:</strong> ' + rowData[13] + '<br>' +
+          '<strong>D5 Nonamer:</strong> ' + rowData[14] + '<br>' +
+          '<strong>Spacer 3:</strong> ' + rowData[15] + '<br>' +
+          '<strong>Spacer 5:</strong> ' + rowData[16] + '<br>' +
+          '<strong>Sample Count Genomic:</strong> ' + rowData[17] + '<br>' +
+          '<strong>Sample Count AIRRseq:</strong> ' + rowData[18] + '<br>' +
+          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[19] + '-' +  rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
+
+
+          '</td></tr>';
+        
+        // Insert the details row below the clicked row
+        tr.after(details);
+      }
+    });
+    "
+  )
+)
+
+
+
+
+```
