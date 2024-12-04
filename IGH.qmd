@@ -11,6 +11,34 @@ format: html
 source("functions.R")
 ```
 
+```{r}
+
+library(dplyr)
+
+# Create new columns without renaming the existing ones
+bag_data <- bag_data %>%
+  mutate(
+    nonamer_3 = apply(select(., c("v_nonamer", "d_3_nonamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    heptamer_3 = apply(select(., c("v_heptamer", "d_3_heptamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    nonamer_5 = apply(select(., c("j_nonamer", "d_5_nonamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    heptamer_5 = apply(select(., c("j_heptamer", "d_5_heptamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    })
+  )
+
+
+```
+
 ```{r fig.width = 15, fig.height = 10}
 library(DT)
 library(dplyr)
@@ -20,10 +48,29 @@ chain_bag_data <- bag_data[grepl("IGH",bag_data$allele),]
 chain_bag_data_subset <- chain_bag_data %>%
   select(
     chain, gene_type, asc, allele, seq, seq_gapped,
-    v_heptamer, v_nonamer, j_heptamer, j_nonamer,
-    d_3_heptamer, d_3_nonamer, d_5_heptamer, d_5_nonamer,
-    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq,Family
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, samples_AIRRseq,samples_genomic,gene_label
+  ) %>%
+  group_by(chain, gene_type, asc, allele, seq, seq_gapped, Family) %>%
+  summarize(
+    diffrent_rss = n(),
+    heptamer_3 = paste(heptamer_3, collapse = ","),
+    nonamer_3 = paste(nonamer_3, collapse = ","),
+    heptamer_5 = paste(heptamer_5, collapse = ","),
+    nonamer_5 = paste(nonamer_5, collapse = ","),
+    spacer_3 = paste(spacer_3, collapse = ","),
+    spacer_5 = paste(spacer_5, collapse = ","),
+    sample_count_genomic = length(unique(samples_genomic[samples_genomic != ""])),
+    sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
+     gene_label = paste0(unique(gene_label), collapse = ", "),
+    .groups = "drop" # Ensures the result is not grouped after summarizing
+  )%>%
+  select(
+    chain, gene_type, asc, allele, seq, seq_gapped,
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, diffrent_rss, gene_label
   )
+
 # Create the datatable
 #DT::datatable(chain_bag_data_subset)
 
@@ -34,7 +81,7 @@ DT::datatable(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
     columnDefs = list(
-      list(visible = FALSE, targets = c(5:19)) # Hide all columns except the first four
+      list(visible = FALSE, targets = c(6:17)) # Hide all columns except the first four
     )
   ),
   callback = JS(
@@ -52,21 +99,19 @@ DT::datatable(
           '<strong>Gene Type:</strong> ' + rowData[2] + '<br>' +
           '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
           '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
+          '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
+          '<strong>Number of combinations:</strong> ' + rowData[16] + '<br>' +
           '<strong>Seq:</strong> ' + rowData[5] + '<br>' +
           '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>' +
-          '<strong>V Heptamer:</strong> ' + rowData[7] + '<br>' +
-          '<strong>V Nonamer:</strong> ' + rowData[8] + '<br>' +
-          '<strong>J Heptamer:</strong> ' + rowData[9] + '<br>' +
-          '<strong>J Nonamer:</strong> ' + rowData[10] + '<br>' +
-          '<strong>D3 Heptamer:</strong> ' + rowData[11] + '<br>' +
-          '<strong>D3 Nonamer:</strong> ' + rowData[12] + '<br>' +
-          '<strong>D5 Heptamer:</strong> ' + rowData[13] + '<br>' +
-          '<strong>D5 Nonamer:</strong> ' + rowData[14] + '<br>' +
-          '<strong>Spacer 3:</strong> ' + rowData[15] + '<br>' +
-          '<strong>Spacer 5:</strong> ' + rowData[16] + '<br>' +
-          '<strong>Sample Count Genomic:</strong> ' + rowData[17] + '<br>' +
-          '<strong>Sample Count AIRRseq:</strong> ' + rowData[18] + '<br>' +
-          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[19] + '-' +  rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
+          '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
+          '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
+          '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
+          '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
+          '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>' +
+          '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>' +
+          '<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
+          '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
+          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[15] + '-' +  rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
 
 
           '</td></tr>';

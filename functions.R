@@ -6,9 +6,9 @@ pacman::p_load('dplyr', 'tidyr', 'htmltools', 'bbplot', 'scales', 'data.table', 
 
 
 
-IGH_df <- read.csv("26_11_IGH_allele_reference_table.csv")
-IGL_df <- read.csv("26_11_IGL_allele_reference_table.csv")
-IGK_df <- read.csv("26_11_IGK_allele_reference_table.csv")
+IGH_df <- read.csv("03_12_IGH_allele_reference_table.csv")
+IGL_df <- read.csv("03_12_IGL_allele_reference_table.csv")
+IGK_df <- read.csv("03_12_IGK_allele_reference_table.csv")
 bag_data <- bind_rows(IGH_df, IGL_df, IGK_df)
 #bag_data <- bag_data %>%mutate(gene = str_extract(allele, "[^*]+"))
 
@@ -20,12 +20,44 @@ bag_data <- bag_data %>%
 
 optimized_thresholds <- fread("optimized_thresholds.tsv")
 
-data_ <- fread("filter_25_11_rep_data.csv")
+data_ <- fread("filter_03_12_rep_data.csv")
 data_[, frac := count / sum_count]
 data_[, frac_allele := count / sum_count]
 
-allele_appearance <- function(data_, imgt_genes, chain = "IGH") {
+allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
   
+
+result <- imgt_bag_data %>%
+  select(allele, samples_AIRRseq, samples_genomic) %>%
+  rowwise() %>%
+  mutate(
+    samples_genomic = if_else(is.na(samples_genomic), list(""), strsplit(samples_genomic, ",")),
+    samples_AIRRseq = if_else(is.na(samples_AIRRseq), list(""), strsplit(samples_AIRRseq, ","))
+  ) %>%
+  summarize(
+    allele = allele,
+    count_in_both = length(intersect(unlist(samples_genomic), unlist(samples_AIRRseq)) %>% 
+                             .[. != "" & !is.na(.)]),
+    count_only_genomic = length(setdiff(unlist(samples_genomic), unlist(samples_AIRRseq)) %>% 
+                                  .[. != "" & !is.na(.)]),
+    count_only_AIRRseq = length(setdiff(unlist(samples_AIRRseq), unlist(samples_genomic)) %>% 
+                                  .[. != "" & !is.na(.)])
+  )
+
+
+# Reshape for plotting
+result_long <- result %>%
+  pivot_longer(
+    cols = starts_with("count"),
+    names_to = "category",
+    values_to = "count"
+  ) %>%
+  mutate(category = recode(category, 
+                           "count_in_both" = "In both",
+                           "count_only_genomic" = "Genomic only",
+                           "count_only_AIRRseq" = "AIRRseq only"))
+
+
   data_ <- data_[grepl(imgt_genes, data_$gene),]
   
   alleles <- data_$allele
@@ -48,7 +80,7 @@ allele_appearance <- function(data_, imgt_genes, chain = "IGH") {
     complete(imgt_call, fill = list(count = 0)) 
 
   # Plot the processed data
-  p <- ggplot(count_data, aes(x = imgt_call, y = count)) + 
+  p <- ggplot(result_long, aes(x = allele, y = count, fill = category)) + 
     geom_bar(stat = "identity") +  # Use stat = "identity" to plot the precomputed counts
     scale_x_discrete(drop = FALSE) +
     labs(x = "allele", y = "# Individuals", fill = "") + 
@@ -66,7 +98,7 @@ allele_appearance <- function(data_, imgt_genes, chain = "IGH") {
       axis.title = element_text(size = 14)
     )
     
-  
+
   p1<-ggplotly(p, height = height, width = height)
   
   p <- ggplot(data_, aes(x = imgt_call, y = frac_allele,text = paste0(paste("</br>allele : ",allele,
@@ -82,6 +114,25 @@ allele_appearance <- function(data_, imgt_genes, chain = "IGH") {
           axis.text.y = element_text(size = 10),
           axis.title = element_text(size = 12))
   
+  p <- ggplot(data_, 
+       aes(x = imgt_call, y = frac_allele,
+           text = paste0("</br>allele : ", allele, "</br>sample: ", sample))) +
+    geom_boxplot() + # Add boxplot to show the distribution
+    geom_point(data = subset(data_, frac_allele != 0), 
+               aes(color = factor(frac_allele != 0)), # Add color aesthetic if needed
+               position = position_jitter(width = 0.2), 
+               alpha = 1, size = 1.5) +
+    scale_color_manual(values = c("TRUE" = alpha("darkblue", 1), "FALSE" = alpha("#74A089", 1)),
+                       guide = "none") + # Hide legend if not needed
+    labs(x = "Allele", y = "Frequency") + 
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          axis.text.x = element_blank(),
+          axis.text.y = element_text(size = 10),
+          axis.title = element_text(size = 12))
+
+
+
   p2<-ggplotly(p, height = height, width = height)
   
   sub_p1 <- subplot(p2, # boxplot and point - decrease size of points and remove legend
@@ -95,7 +146,7 @@ allele_appearance <- function(data_, imgt_genes, chain = "IGH") {
 
 
 heatmap_alleles <-
-  function(data_, g_group = "IGHVF5-G30", allele_db) {
+  function(data_, g_group, allele_db) {
 
     data_ <- data_[grepl(imgt_genes, data_$gene),]
     
@@ -156,10 +207,7 @@ heatmap_alleles <-
   }
 
 
-seq_align <- function(data_, imgt_genes, chain = "IGH") {   
-data_ <- data_[grepl(imgt_genes, data_$gene),]
-  sequences <- unique(data_$ref)
-  alleles <- unique(data_$allele)  # Assuming you have an allele column in your data
+seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") {   
   # Remove any sequences that are NA or empty
   cleaned_seqs <- sequences[sequences != "" & !is.na(sequences)]
   # If sequences are empty or invalid, replace them with a default sequence
@@ -249,11 +297,9 @@ data_ <- data_[grepl(imgt_genes, data_$gene),]
 
 
 
-seq_align2 <-function(data_, imgt_genes, chain = "IGH") {    
+seq_align2 <-function(sequences, alleles, imgt_genes, chain = "IGH") {    
 
-  data_ <- data_[grepl(imgt_genes, data_$gene),]
-  sequences <- unique(data_$ref)
-  alleles <- unique(data_$allele)  # Assuming you have an allele column in your data
+# Assuming you have an allele column in your data
   # Remove any sequences that are NA or empty
   cleaned_seqs <- sequences[sequences != "" & !is.na(sequences)]
   # If sequences are empty or invalid, replace them with a default sequence
@@ -424,16 +470,23 @@ seq_align2 <-function(data_, imgt_genes, chain = "IGH") {
     )
     
     
+    if (len < 80) {
+      # Handle the case where len is less than 80
+      p_list <- list(
+        plot_align(matrix_sequences_plot, 1, len, hotspot)
+      )
+    } else {
+      # Standard case where len >= 80
+      p_list <- apply(data.frame(
+                      low_bound = seq(1, len, by = 80),
+                      upper_bound = c(seq(81, len, by = 80), len)
+                      ),
+                      1, function(x) {
+                        plot_align(matrix_sequences_plot, x[1], x[2], hotspot)
+                      })
+    }
     
-    p_list <- apply(data.frame(
-      low_bound = seq(1, len, by = 80),
-      upper_bound = c(seq(81, len, by = 80), len)
-    ),
-    1, function(x) {
-      plot_align(matrix_sequences_plot, x[1], x[2], hotspot)
-    })
 
     p_list
     
 }
-
