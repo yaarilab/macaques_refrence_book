@@ -1,5 +1,5 @@
 ---
-title: "The bag of allele"
+title: "Ig alleles browser"
 execute:
   echo: false
   warning: false
@@ -7,16 +7,22 @@ execute:
 format: html
 ---
 
+### 
+
+| [**IGH**](IGH.html)                                       | [**IGL**](IGL.html)                                       | [**IGK**](IGK.html)                                       |
+|------------------------|------------------------|------------------------|
+| [Alleles Table](IGH.html#alleles-table)                   | [Alleles Table](IGL.html#alleles-table)                   | [Alleles Table](IGK.html#alleles-table)                   |
+| [Alleles Visual Summary](IGH.html#Alleles-Visual-Summary) | [Alleles Visual Summary](IGL.html#Alleles-Visual-Summary) | [Alleles Visual Summary](IGK.html#Alleles-Visual-Summary) |
+
 ```{r}
 source("functions.R")
 library(dplyr)
 library(plotly)
 library(gridExtra)
+  
 ```
 
-
 ```{r}
-
 library(dplyr)
 
 # Create new columns without renaming the existing ones
@@ -44,324 +50,81 @@ bag_data <- bag_data %>%
 ```
 
 ```{r}
-#allele = str_extract(allele, "(?<=\\*).*"),
+library(DT)
+
 bag_data <- bag_data %>%
-  mutate(al = str_extract(allele, "(?<=\\*).*"),
-         ASC = substr(ASC, 3, nchar(ASC)),
-         Family = substr(Family, 3, nchar(Family)))
-
-```
-
-```{r}
-  
-  # Function to create a sunburst plot for a specific gene type
-create_sunburst_plot <- function(data, gene_type) {
-  hierarchical_data <- bind_rows(
-    # Level 1: Family
-    data %>%
-      filter(gene_type == gene_type) %>%
-      group_by(Family) %>%
-      summarize(value = length(unique(allele))) %>%
-      mutate(level = "Family", category = Family, parent = ""),
-    
-    # Level 2: ASC
-    data %>%
-      filter(gene_type == gene_type) %>%
-      group_by(Family, ASC) %>%
-      summarize(value = length(unique(allele))) %>%
-      mutate(level = "ASC", category = ASC, parent = Family),
-    
-    # Level 3: Allele
-    data %>%
-      filter(gene_type == gene_type) %>%
-      group_by(Family,ASC, al) %>%
-      summarize(n = n(),value =  length(unique(allele)), sample_count_genomic = sum(sample_count_genomic), sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
-      heptamer_3 = paste0(unique(heptamer_3), collapse = ", "),
-        heptamer_5 = paste0(unique(heptamer_5), collapse = ", "),
-      nonamer_3 = paste0(unique(nonamer_3), collapse = ", "),
-        nonamer_5 = paste0(unique(nonamer_5), collapse = ", "),
-        seq = paste0(unique(seq), collapse = ", "),
-        gene_label = paste0(unique(gene_label), collapse = ", ")) %>%
-      mutate(
-        level = "Allele", 
-        category = al,  # Only allele name in the label
-        parent = ASC,
-       # unique_id =paste0(al, " (", ASC, ")"), 
-        hover_text = paste0(al,
-        "<br>Ig lable: " ,gene_label,
-        "<br>Genomic sample count: ", sample_count_genomic,
-        "<br>AIRRseq sample count: ", sample_count_AIRRseq,
-        "<br>seq: ", seq,
-        "<br>Number of combinations: ", n,
-        "<br>heptamer_3: ", heptamer_3,
-        "<br>nonamer_3: ", nonamer_3,
-        "<br>heptamer_5: ", heptamer_5,
-        "<br>nonamer_5: ", nonamer_5)
-
-      )
-  )
-  
-  
-  plot <- plot_ly(
-    data = hierarchical_data,
-    type = "sunburst",
-    labels = ~category,         # Display only the allele name
-    parents = ~parent,
-    values = ~value,
-    #ids = ~unique_id,
-    textinfo = "label",         # Show only the label on the plot
-    hoverinfo = "text",         # Use custom hover text
-    hovertext = ~hover_text,    # Detailed hover text
-    branchvalues = "total"
+  select(
+    chain, gene_type, ASC, allele, seq, seq_gapped,
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, samples_AIRRseq,samples_genomic,iglabel
   ) %>%
-    layout(title = gene_type)
-  
-  return(plot)
-}
+  group_by(chain, gene_type, ASC, allele, seq, seq_gapped, Family) %>%
+  summarize(
+    diffrent_rss = n(),
+    heptamer_3 = paste(heptamer_3, collapse = ","),
+    nonamer_3 = paste(nonamer_3, collapse = ","),
+    heptamer_5 = paste(heptamer_5, collapse = ","),
+    nonamer_5 = paste(nonamer_5, collapse = ","),
+    spacer_3 = paste(spacer_3, collapse = ","),
+    spacer_5 = paste(spacer_5, collapse = ","),
+    sample_count_genomic = length(unique(samples_genomic[samples_genomic != ""])),
+    sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
+     iglabel = paste0(unique(iglabel), collapse = ", "),
+    .groups = "drop" # Ensures the result is not grouped after summarizing
+  )%>%
+  select(
+    chain, gene_type, ASC, allele, seq, seq_gapped,
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, diffrent_rss, iglabel
+  )
 
-# Create sunburst plots for each gene type
-plot_IGHV <- create_sunburst_plot(bag_data[grepl("HV",bag_data$Family),], "IGHV")
-plot_IGLV <- create_sunburst_plot(bag_data[grepl("LV",bag_data$Family),], "IGLV")
-plot_IGKV <- create_sunburst_plot(bag_data[grepl("KV",bag_data$Family),], "IGKV")
-plot_IGHD <- create_sunburst_plot(bag_data[grepl("HD",bag_data$Family),], "IGHD")
-plot_IGHJ <- create_sunburst_plot(bag_data[grepl("HJ",bag_data$Family),], "IGHJ")
-plot_IGKJ <- create_sunburst_plot(bag_data[grepl("KJ",bag_data$Family),], "IGKJ")
-plot_IGLJ <- create_sunburst_plot(bag_data[grepl("LJ",bag_data$Family),], "IGLJ")
-
-```
-
-
-```{r fig.width = 10, fig.height = 10}
-library(dplyr)
-library(plotly)
-create_sunburst_plot <- function(data, gene_type) {
-# Prepare hierarchical data
-all_data <- bind_rows(
-    # Level 1: Family
-    data %>%
-        filter(gene_type == gene_type) %>%
-        group_by(Family) %>%
-        summarize(
-            value = n_distinct(allele)
-        ) %>%
-        mutate(level = "Family", category = Family, parent = ""),
-
-    # Level 2: ASC
-    data %>%
-        filter(gene_type == gene_type) %>%
-        group_by(Family, ASC) %>%
-        summarize(
-            value = n_distinct(allele)
-        ) %>%
-        mutate(level = "ASC", category = ASC, parent = Family),
-
-    # Level 3: Allele
-    data %>%
-        filter(gene_type == gene_type) %>%
-        group_by(allele, ASC, Family) %>%
-        summarize(
-            n = n(),
-            value = 1,
-            sample_count_genomic = sum(sample_count_genomic),
-            sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
-            heptamer_3 = paste0(heptamer_3, collapse = ", "),
-            heptamer_5 = paste0(heptamer_5, collapse = ", "),
-            nonamer_3 = paste0(nonamer_3, collapse = ", "),
-            nonamer_5 = paste0(nonamer_5, collapse = ", "),
-            seq = paste0(unique(seq), collapse = ", "),
-            gene_label = paste0(unique(gene_label), collapse = ", ")
-        ) %>%
-        mutate(
-            level = "Allele",
-            category = allele,
-            parent = ASC,
-            hover_text = paste0(
-                allele,
-                "<br>Ig lable: " ,gene_label,
-                "<br>Genomic sample count: ", sample_count_genomic,
-                "<br>AIRRseq sample count: ", sample_count_AIRRseq,
-               # "<br>Sequence: ", seq,
-                "<br>heptamer_3: ", heptamer_3,
-                "<br>nonamer_3: ", nonamer_3,
-                "<br>heptamer_5: ", heptamer_5,
-                "<br>nonamer_5: ", nonamer_5
-            )
-        )
-)
-
-AIRRseq0_data <- all_data %>%
-    filter(!(level == "Allele" & sample_count_AIRRseq == 0)) %>%
-    # Keep only ASCs with valid children
-    filter(!(level == "ASC" & !category %in% parent[all_data$level == "Allele"])) %>%
-    # Keep only Families with valid children
-    filter(!(level == "Family" & !category %in% parent[all_data$level == "ASC"]))
-
-
-AIRRseq0_data <- AIRRseq0_data %>%
-    filter(parent == "" | parent %in% category)
-
-family_values <- AIRRseq0_data %>%
-    filter(level == "Allele") %>%
-    count(Family, name = "value") %>%
-    rename(category = Family)
-
-# Step 2: Calculate children counts for ASC level
-asc_values <- AIRRseq0_data %>%
-    filter(level == "Allele") %>%
-    count(parent, name = "value") %>%
-    rename(category = parent)
-
-# Step 3: Merge recalculated values back into filtered_data
-AIRRseq0_data <- AIRRseq0_data %>%
-    left_join(family_values, by = "category", suffix = c("", "_family")) %>%
-    left_join(asc_values, by = "category", suffix = c("", "_asc")) %>%
-    mutate(
-        value = case_when(
-            level == "Family" ~ coalesce(value_family, 0),  # Use Family values
-            level == "ASC" ~ coalesce(value_asc, 0),       # Use ASC values
-            level == "Allele" ~ 1                          # Leaf nodes have value = 1
-        )
-    ) %>%
-    select(-value_family, -value_asc) 
-
-
-baseline_data <- all_data %>%
-    filter(!(level == "Allele" & str_detect(allele,"_"))) %>%
-    # Keep only ASCs with valid children
-    filter(!(level == "ASC" & !category %in% parent[all_data$level == "Allele"])) %>%
-    # Keep only Families with valid children
-    filter(!(level == "Family" & !category %in% parent[all_data$level == "ASC"]))
-
-
-baseline_data <- baseline_data %>%
-    filter(parent == "" | parent %in% category)
-
-family_values <- baseline_data %>%
-    filter(level == "Allele") %>%
-    count(Family, name = "value") %>%
-    rename(category = Family)
-
-# Step 2: Calculate children counts for ASC level
-asc_values <- baseline_data %>%
-    filter(level == "Allele") %>%
-    count(parent, name = "value") %>%
-    rename(category = parent)
-
-# Step 3: Merge recalculated values back into filtered_data
-baseline_data <- baseline_data %>%
-    left_join(family_values, by = "category", suffix = c("", "_family")) %>%
-    left_join(asc_values, by = "category", suffix = c("", "_asc")) %>%
-    mutate(
-        value = case_when(
-            level == "Family" ~ coalesce(value_family, 0),  # Use Family values
-            level == "ASC" ~ coalesce(value_asc, 0),       # Use ASC values
-            level == "Allele" ~ 1                          # Leaf nodes have value = 1
-        )
-    ) %>%
-    select(-value_family, -value_asc)
-
-
-plot <- plot_ly(
-    type = "sunburst",
-    branchvalues = "total"
-)
-
-# Add trace for all_data
-plot <- plot %>%
-    add_trace(
-        data = all_data,
-        labels = ~category,
-        parents = ~parent,
-        values = ~value,
-        hovertext = ~hover_text,
-        hoverinfo = "text",
-        name = "All Data",
-        visible = TRUE  # Initially visible
-    ) %>%
-    add_trace(
-        data = AIRRseq0_data,
-        labels = ~category,
-        parents = ~parent,
-        values = ~value,
-        hovertext = ~hover_text,
-        hoverinfo = "text",
-        name = "AIRRseq0_data",
-        visible = FALSE  # Initially hidden
-    ) %>%
-    add_trace(
-        data = baseline_data,
-        labels = ~category,
-        parents = ~parent,
-        values = ~value,
-        hovertext = ~hover_text,
-        hoverinfo = "text",
-        name = "baseline_data",
-        visible = FALSE  # Initially hidden
+# Create the table with all columns, but hide additional ones
+DT::datatable(
+  bag_data, # Include all columns
+  options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    columnDefs = list(
+      list(visible = FALSE, targets = c(6:17)) # Hide all columns except the first four
     )
+  ),
+  callback = JS(
+    "
+    table.on('click', 'tr', function() {
+      var tr = $(this); // Get the clicked row
+      var rowData = table.row(this).data(); // Get all data for the clicked row
+      if (tr.next().hasClass('detail-row')) {
+        // If details row already exists, remove it
+        tr.next().remove();
+      } else {
+        // Construct detailed information using all columns
+        var details = '<tr class=\"detail-row\"><td colspan=\"4\">' +
+          '<strong>Chain:</strong> ' + rowData[1] + '<br>' +
+          '<strong>Gene Type:</strong> ' + rowData[2] + '<br>' +
+          '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
+          '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
+          '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
+          '<strong>Number of combinations:</strong> ' + rowData[16] + '<br>' +
+          '<strong>Seq:</strong> ' + rowData[5] + '<br>' +
+          '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>' +
+          '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
+          '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
+          '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
+          '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
+          '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>' +
+          '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>' +
+          '<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
+          '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
+          '<strong>More Details about this ASC:</strong> <a href=\"' + 'IG' + rowData[15] + '-' +  rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
 
-# Add buttons for toggling
-plot <- plot %>%
-    layout(
-        updatemenus = list(
-            list(
-                type = "buttons",
-                direction = "down",
-                buttons = list(
-                    list(
-                        label = "All",
-                        method = "update",
-                        args = list(
-                            list(visible = c(FALSE,TRUE,FALSE)),
-                            list(title = gene_type)
-                        )
-                    ),
-                    list(
-                        label = "baseline_data",
-                        method = "update",
-                        args = list(
-                            list(visible = c(TRUE, FALSE,FALSE)),
-                            list(title = gene_type)
-                        )
-                    ),
-                    list(
-                        label = "AIRRseq count > 0",
-                        method = "update",
-                        args = list(
-                            list(visible = c(FALSE, FALSE,TRUE)),
-                            list(title = gene_type)
-                        )
-                    )
-                )
-            )
-        )
+
+          '</td></tr>';
+        
+        // Insert the details row below the clicked row
+        tr.after(details);
+      }
+    });
+    "
+  )
     )
-
- 
-  return(plot)
-}
-
-# Create sunburst plots for each gene type
-plot_IGHV <- create_sunburst_plot(bag_data[grepl("HV",bag_data$Family),], "IGHV")
-plot_IGLV <- create_sunburst_plot(bag_data[grepl("LV",bag_data$Family),], "IGLV")
-plot_IGKV <- create_sunburst_plot(bag_data[grepl("KV",bag_data$Family),], "IGKV")
-plot_IGHD <- create_sunburst_plot(bag_data[grepl("HD",bag_data$Family),], "IGHD")
-plot_IGHJ <- create_sunburst_plot(bag_data[grepl("HJ",bag_data$Family),], "IGHJ")
-plot_IGKJ <- create_sunburst_plot(bag_data[grepl("KJ",bag_data$Family),], "IGKJ")
-plot_IGLJ <- create_sunburst_plot(bag_data[grepl("LJ",bag_data$Family),], "IGLJ")
-
 ```
-
-```{r fig.width = 10, fig.height = 10}
-crosstalk::bscols(plot_IGHV, plot_IGHD)
-```
-
-```{r fig.width = 10, fig.height = 10}
-crosstalk::bscols(plot_IGKV, plot_IGLV)
-```
-
-```{r fig.width = 10, fig.height = 10}
-
-crosstalk::bscols(plot_IGHJ,plot_IGKJ, plot_IGLJ)
-```
-
-

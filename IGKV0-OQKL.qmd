@@ -1,0 +1,191 @@
+---
+title: 'IGKV0-OQKL'
+execute:
+  echo: false
+  warning: false
+  message: false
+format: html
+---
+
+```{r}
+source("functions.R")
+
+```
+
+```{r,echo=FALSE}
+imgt_genes = 'IGKV0-OQKL'
+imgt_bag_data <- bag_data[grepl(imgt_genes,bag_data$allele),]
+alleles_on_bag=unique(imgt_bag_data$allele)
+length_alleles_on_bag=length(alleles_on_bag)
+alleles_on_ref = alleles_on_bag[!grepl("_",alleles_on_bag)]
+length_alleles_on_ref=length(alleles_on_ref)
+alleles_no_on_ref=bag_data[!grepl("_",bag_data$allele),]
+length_alleles_no_on_ref_novel_airrseq = length(imgt_bag_data[imgt_bag_data$sample_count_genomic == 0 & grepl("_",imgt_bag_data$allele) ,"allele"])
+length_alleles_no_on_ref_novel_genomic = length(imgt_bag_data[imgt_bag_data$sample_count_genomic > 0 & grepl("_",imgt_bag_data$allele) ,"allele"])
+allele_on_genotype = unique(imgt_bag_data[imgt_bag_data$sample_count_AIRRseq > 0, "allele"])
+length_allele_on_genotype = length(allele_on_genotype)
+novel_allele_on_genotype = setdiff(allele_on_genotype,alleles_on_ref)
+length_novel_allele_on_genotype = length(novel_allele_on_genotype)
+basline_length_allele_on_genotype = length(setdiff(allele_on_genotype,novel_allele_on_genotype) )
+
+```
+
+```{r}
+novel = ""
+
+if(length_alleles_no_on_ref_novel_airrseq == 0){
+  novel = "No novel alleles were found in the AIRRseq data only"
+} else if(length_alleles_no_on_ref_novel_airrseq == 1){
+  novel = "one novel allele was found in the AIRRseq data only"
+}else {
+   novel = paste0(length_alleles_no_on_ref_novel_airrseq, " novel alleles were found in the AIRRseq data only")
+}
+```
+
+```{r}
+gen_novel = ""
+
+if(length_alleles_no_on_ref_novel_genomic == 0){
+  gen_novel = "No novel alleles were found in the genomic data,"
+} else if(length_alleles_no_on_ref_novel_genomic == 1){
+  gen_novel = "one novel allele was found in the genomic data,"
+}else {
+   gen_novel = paste0(length_novel_allele_on_genotype, " novel alleles were found in the genomic data,")
+}
+```
+
+## 
+
+The ASC `r imgt_genes` includes `r length_alleles_on_bag` alleles in the bag of alleles, `r length_alleles_on_ref` alleles was in the baseline. `r gen_novel` `r novel` .<br> `r length_allele_on_genotype` alleles from the bag was found in the genotype of at least one subject, `r basline_length_allele_on_genotype` of which are from the baseline.
+
+```{r}
+# Check the condition
+unique_allele = FALSE
+if (length_alleles_on_bag > 1) {
+  unique_allele = TRUE
+}
+```
+
+## Group alignment
+
+```{r fig.width = 10, fig.height = 10}
+if(unique_allele){
+sequences <- if (any(grepl("IGHV|IGLV|IGKV", imgt_genes))) {
+  unique(imgt_bag_data$seq_gapped)
+} else {
+  unique(imgt_bag_data$seq)
+}
+alleles <- unique(imgt_bag_data$allele)
+}
+```
+
+```{r}
+message = ""
+
+if(unique_allele){
+  message = "Based on the viewed alleles, we calculated the distance between the germline sequences."
+}else {
+   message = "Skipping Group alignment section: number of alleles < 1"
+}
+```
+
+`r message`
+
+```{r fig.width = 10, fig.height = 10}
+if(unique_allele){
+seq_align(sequences, alleles, imgt_genes)
+}
+
+```
+
+```{r fig.width = 12, fig.height = 10}
+if(unique_allele){
+tagList(seq_align2(sequences, alleles, imgt_genes))
+}
+```
+
+### Allele specific cutoff
+
+Observing the alleles frequencies we adapted the following thresholds
+
+```{r fig.width = 10, fig.height = 10}
+library(DT)
+
+# Create a data frame with ordered alleles
+ordered_data <- optimized_thresholds[optimized_thresholds$gene == imgt_genes, c("allele", "threshold")]
+ordered_data <- ordered_data[order(ordered_data$allele), ]  # Order by allele
+
+# Create the datatable
+DT::datatable(ordered_data)
+
+```
+
+## Allele Appearnces
+
+The plot visualizes the appearances and usage of alleles across a population, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and oper alignment to the germline starting position were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles.
+
+```{r}
+# Step 1: Extract alleles from bag_data
+alleles_bag <- unique(imgt_bag_data$allele)
+
+# Step 2: Identify alleles in bag_data but not in data_
+missing_alleles <- setdiff(alleles_bag, data_$allele)
+
+# Step 3: Create a template for missing_data with all columns in data_
+missing_data <- data.frame(allele = missing_alleles, stringsAsFactors = FALSE)
+
+if(nrow(missing_data) > 0){
+  # Step 4: Dynamically add all columns from data_ with default values
+  for (col in setdiff(names(data_), "allele")) {
+    missing_data[[col]] <- if (col == "gene") {
+      imgt_genes
+    } else if (col %in% c("frac", "frac_allele")) {
+      0
+    } else {
+      NA
+    }
+  }
+
+
+data1 <- rbind(data_, missing_data)
+} else {
+   data1 <- data_
+}
+data1 <- data1 %>%
+  arrange(allele)
+```
+
+```{r fig.width = 10, fig.height = 10}
+allele_appearance(data1, imgt_genes, imgt_bag_data)%>%   layout(     autosize = F,     width = 800,     height = 700    )
+```
+
+```{r fig.width = 10, fig.height = 10}
+alleles_with_counts <- imgt_bag_data %>%
+  filter(sample_count_AIRRseq > 0) %>%
+  select(allele)
+
+```
+
+```{r}
+message = ""
+
+if(length(unique(alleles_with_counts$allele)) > 1){
+  message = "The graph below shows the allele-based individual genotype inference for this allele group."
+}else {
+   message = ""
+}
+```
+
+`r message`
+
+```{r fig.width = 10, fig.height = 10}
+
+if(length(unique(alleles_with_counts$allele)) > 1){
+heatmap_alleles(data_, imgt_genes) %>%
+  layout(
+    autosize = F,
+    width = 800,
+    height = 600
+  )
+}
+```

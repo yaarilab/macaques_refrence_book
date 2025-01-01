@@ -2,88 +2,91 @@
 pacman::p_load('dplyr', 'tidyr', 'htmltools', 'bbplot', 'scales', 'data.table', 'ggmsa',
                'ggplot2', 'rdrop2', 'shiny', 'BiocManager', 'DECIPHER', 'ComplexUpset',
                'dendextend', 'data.table', 'Biostrings', 'alakazam', "unikn", 'ggupset',
-               'plotly', "jcolors", 'ggdendro', "RColorBrewer","kmer","heatmaply", "ggseqlogo", "stringr", install = F)
+               'plotly', "jcolors", 'ggdendro', "RColorBrewer","kmer","heatmaply", "ggseqlogo", 
+               "msa", "stringr", install = F)
 
 
 
-IGH_df <- read.csv("03_12_IGH_allele_reference_table.csv")
-IGL_df <- read.csv("03_12_IGL_allele_reference_table.csv")
-IGK_df <- read.csv("03_12_IGK_allele_reference_table.csv")
-bag_data <- bind_rows(IGH_df, IGL_df, IGK_df)
-#bag_data <- bag_data %>%mutate(gene = str_extract(allele, "[^*]+"))
+#IGH_df <- read.csv("03_12_IGH_allele_reference_table.csv")
+#IGL_df <- read.csv("03_12_IGL_allele_reference_table.csv")
+#IGK_df <- read.csv("03_12_IGK_allele_reference_table.csv")
+#bag_data <- bind_rows(IGH_df, IGL_df, IGK_df)
 
-bag_data <- bag_data %>%
-  mutate(gene = str_extract(allele, "[^*]+"),
-         ASC = sub("\\*.*", "", allele),
-         Family = sub("-.*", "", allele),
-         chain = substr(allele, 1, 3))
+bag_data <- fread("usofa_with_rss_and_leader_and_asc_2024-12-31.csv")
+setnames(bag_data, "allele", "old_name")
+bag_data[, allele := new_tag]  # Assuming new names match old names
 
+bag_data[, `:=`(
+  gene = stringr::str_extract(allele, "[^*]+"),
+  ASC = sub("\\*.*", "", allele),
+  Family = sub("-.*", "", allele),
+  chain = substr(allele, 1, 3)
+)]
 optimized_thresholds <- fread("optimized_thresholds.tsv")
 
-data_ <- fread("filter_03_12_rep_data.csv")
+data_ <- fread("filter_d_20_12_rep_data.csv")
+setnames(data_, "allele", "old_allele")
+
+# Update allele in data_ based on bag_data
+data_[, allele := bag_data[match(old_allele, old_name), allele]]
+
 data_[, frac := count / sum_count]
 data_[, frac_allele := count / sum_count]
 
+
+
 allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
   
-
-result <- imgt_bag_data %>%
-  select(allele, samples_AIRRseq, samples_genomic) %>%
-  rowwise() %>%
-  mutate(
-    samples_genomic = if_else(is.na(samples_genomic), list(""), strsplit(samples_genomic, ",")),
-    samples_AIRRseq = if_else(is.na(samples_AIRRseq), list(""), strsplit(samples_AIRRseq, ","))
-  ) %>%
-  summarize(
-    allele = allele,
-    count_in_both = length(intersect(unlist(samples_genomic), unlist(samples_AIRRseq)) %>% 
-                             .[. != "" & !is.na(.)]),
-    count_only_genomic = length(setdiff(unlist(samples_genomic), unlist(samples_AIRRseq)) %>% 
-                                  .[. != "" & !is.na(.)]),
-    count_only_AIRRseq = length(setdiff(unlist(samples_AIRRseq), unlist(samples_genomic)) %>% 
-                                  .[. != "" & !is.na(.)])
-  )
-
-
-# Reshape for plotting
-result_long <- result %>%
-  pivot_longer(
-    cols = starts_with("count"),
-    names_to = "category",
-    values_to = "count"
-  ) %>%
-  mutate(category = recode(category, 
-                           "count_in_both" = "In both",
-                           "count_only_genomic" = "Genomic only",
-                           "count_only_AIRRseq" = "AIRRseq only"))
+  result <- imgt_bag_data %>%
+    select(allele, samples_AIRRseq, samples_genomic) %>%
+    rowwise() %>%
+    mutate(
+      samples_genomic = if_else(is.na(samples_genomic), list(""), strsplit(samples_genomic, ",")),
+      samples_AIRRseq = if_else(is.na(samples_AIRRseq), list(""), strsplit(samples_AIRRseq, ","))
+    ) %>%
+    summarize(
+      allele = allele,
+      count_in_both = length(intersect(unlist(samples_genomic), unlist(samples_AIRRseq)) %>% 
+                              .[. != "" & !is.na(.)]),
+      count_only_genomic = length(setdiff(unlist(samples_genomic), unlist(samples_AIRRseq)) %>% 
+                                    .[. != "" & !is.na(.)]),
+      count_only_AIRRseq = length(setdiff(unlist(samples_AIRRseq), unlist(samples_genomic)) %>% 
+                                    .[. != "" & !is.na(.)])
+    )
 
 
-  data_ <- data_[grepl(imgt_genes, data_$gene),]
-  
+  # Reshape for plotting
+  result_long <- result %>%
+    pivot_longer(
+      cols = starts_with("count"),
+      names_to = "category",
+      values_to = "count"
+    ) %>%
+    mutate(category = recode(category, 
+                            "count_in_both" = "Both",
+                            "count_only_genomic" = "Genomic Only",
+                            "count_only_AIRRseq" = "Repertoire Only",
+                            .default = "Not in Database"))
+
+  # Filter and adjust height
+  data_ <- data_[grepl(imgt_genes, data_$allele),]
   alleles <- data_$allele
   data_$imgt_call <- data_$allele
-  
-  height = (length(unique(data_$imgt_call)))
-  height = ifelse(length(height)<20, 25, height)
-  height = height*30
-  
 
-  count_data <- data_ %>%
-    group_by(imgt_call) %>%
-    summarise(count = sum(!is.na(subject))) # Count non-NA subjects per allele
+  height = length(unique(data_$imgt_call))
+  height = ifelse(height < 20, 25, height)
+  height = height * 30
 
-  # Replace any `NA` in `imgt_call` with "0" for plotting
-  count_data$imgt_call <- ifelse(is.na(count_data$imgt_call), "0", count_data$imgt_call)
-
-  # Ensure all alleles (even with 0 counts) are retained for plotting
-  count_data <- count_data %>%
-    complete(imgt_call, fill = list(count = 0)) 
+  # Define colors
+  category_colors <- setNames(hcl.colors(4, palette = "Sunset"), 
+                              c("Both", "Repertoire Only", "Genomic Only", "Not in Database"))
 
   # Plot the processed data
   p <- ggplot(result_long, aes(x = allele, y = count, fill = category)) + 
     geom_bar(stat = "identity") +  # Use stat = "identity" to plot the precomputed counts
     scale_x_discrete(drop = FALSE) +
-    labs(x = "allele", y = "# Individuals", fill = "") + 
+    scale_fill_manual(values = category_colors) +
+    labs(x = "Allele", y = "# Individuals", fill = "") + 
     theme_minimal() +
     theme(
       legend.position = "bottom",
@@ -122,11 +125,11 @@ result_long <- result %>%
                aes(color = factor(frac_allele != 0)), # Add color aesthetic if needed
                position = position_jitter(width = 0.2), 
                alpha = 1, size = 1.5) +
-    scale_color_manual(values = c("TRUE" = alpha("darkblue", 1), "FALSE" = alpha("#74A089", 1)),
+    scale_color_manual(values = c("TRUE" = alpha("red", 1)),
                        guide = "none") + # Hide legend if not needed
     labs(x = "Allele", y = "Frequency") + 
     theme_minimal() +
-    theme(legend.position = "bottom",
+    theme(legend.position = "none",
           axis.text.x = element_blank(),
           axis.text.y = element_text(size = 10),
           axis.title = element_text(size = 12))
@@ -145,10 +148,9 @@ result_long <- result %>%
 
 
 
-heatmap_alleles <-
-  function(data_, g_group, allele_db) {
+heatmap_alleles <-function(data_, g_group, allele_db) {
 
-    data_ <- data_[grepl(imgt_genes, data_$gene),]
+    data_  <- data_[grepl(imgt_genes, data_$allele),]
     
     alleles <- data_$allele
     data_$imgt_call <- data_$allele
@@ -207,46 +209,13 @@ heatmap_alleles <-
   }
 
 
-seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") {   
-  # Remove any sequences that are NA or empty
-  cleaned_seqs <- sequences[sequences != "" & !is.na(sequences)]
-  # If sequences are empty or invalid, replace them with a default sequence
-  if (length(cleaned_seqs) == 0) {
-    cleaned_seqs <- rep(".", 12)  # Replace with 12 "N" bases
-    alleles <- "Default_Allele"  # Set to a default allele name
-  }
-  # If all sequences are identical, skip plotting
-  if (length(unique(cleaned_seqs)) == 1) {
-    return(NULL)  # Skip the plot if all sequences are identical
-  }
-  # Pad sequences so they all have the same length
-  max_len <- max(nchar(cleaned_seqs), na.rm = TRUE)
-  
-  # Correctly pad sequences with "N"
-  cleaned_seqs <- sapply(cleaned_seqs, function(seq) {
-    pad_len <- max_len - nchar(seq)  # Calculate padding length for the current seq
-    if (pad_len > 0) {
-      return(paste0(seq, strrep(".", pad_len)))  # Pad with "N" to match max length
-    } else {
-      return(seq)  # Return the original sequence if no padding is needed
-    }
-  })
-  cleaned_seqs <- as.character(cleaned_seqs)
+seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") { 
 
-  sequences = cleaned_seqs
-  
-  if (length(cleaned_seqs) == length(alleles)) {
-    vgerms <- setNames(cleaned_seqs, alleles)
-  } else {
-    stop("The number of sequences must match the number of alleles.")
-  }
+    alignment <- DNAStringSet(msa(sequences, type = "dna"))
 
-
-    vgerm_dist <- gsub("[.]", "-", sequences)
-    vgerm_dnaset <- DNAStringSet(vgerm_dist)
     mat_sub <-
       DistanceMatrix(
-        vgerm_dnaset,
+        alignment,
         includeTerminalGaps = FALSE,
         penalizeGapGapMatches = FALSE,
         penalizeGapLetterMatches = T,
@@ -258,7 +227,7 @@ seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") {
     rownames(mat_sub) <-  gsub("IGH", "", rownames(mat_sub))
     
     matrix_sequences <-
-      as.data.frame(sapply(sequences, seqinr::s2c), stringsAsFactors = F)
+      as.data.frame(sapply(as.character(alignment), seqinr::s2c), stringsAsFactors = F)
 
     nucs <-
        nrow(matrix_sequences) - sum(apply(matrix_sequences, 1, function(x)
@@ -271,6 +240,7 @@ seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") {
     }
     dend <- as.dendrogram(hc)
     labels(dend) <- alleles
+    
     dend <- dendextend::set(dend, "labels_cex", 0.5)
     ggd1 <- as.ggdend(dend)
     ggd1$labels$y <- ggd1$labels$y-0.01
@@ -300,44 +270,13 @@ seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") {
 seq_align2 <-function(sequences, alleles, imgt_genes, chain = "IGH") {    
 
 # Assuming you have an allele column in your data
-  # Remove any sequences that are NA or empty
-  cleaned_seqs <- sequences[sequences != "" & !is.na(sequences)]
-  # If sequences are empty or invalid, replace them with a default sequence
-  if (length(cleaned_seqs) == 0) {
-    cleaned_seqs <- rep(".", 12)  # Replace with 12 "N" bases
-    alleles <- "Default_Allele"  # Set to a default allele name
-  }
-  # If all sequences are identical, skip plotting
-  if (length(unique(cleaned_seqs)) == 1) {
-    return(NULL)  # Skip the plot if all sequences are identical
-  }
-  # Pad sequences so they all have the same length
-  max_len <- max(nchar(cleaned_seqs), na.rm = TRUE)
-  
-  # Correctly pad sequences with "N"
-  cleaned_seqs <- sapply(cleaned_seqs, function(seq) {
-    pad_len <- max_len - nchar(seq)  # Calculate padding length for the current seq
-    if (pad_len > 0) {
-      return(paste0(seq, strrep(".", pad_len)))  # Pad with "N" to match max length
-    } else {
-      return(seq)  # Return the original sequence if no padding is needed
-    }
-  })
-  cleaned_seqs <- as.character(cleaned_seqs)
-
-  sequences = cleaned_seqs
-  
-  if (length(cleaned_seqs) == length(alleles)) {
-    vgerms <- setNames(cleaned_seqs, alleles)
-  } else {
-    stop("The number of sequences must match the number of alleles.")
-  }
-
+  alignment <- DNAStringSet(msa(sequences, type = "dna"))
+  sequences <- as.character(alignment)
   len <-nchar(sequences[1])
 
     matrix_sequences <-
       as.data.frame(sapply(sequences, seqinr::s2c), stringsAsFactors = F)
-    
+      
     names(matrix_sequences) = alleles
 
     nucs <-

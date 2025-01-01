@@ -9,6 +9,7 @@ format: html
 
 ```{r}
 source("functions.R")
+
 ```
 
 ```{r,echo=FALSE}
@@ -59,16 +60,16 @@ The ASC `r imgt_genes` includes `r length_alleles_on_bag` alleles in the bag of 
 
 ```{r}
 # Check the condition
-pr = FALSE
+unique_allele = FALSE
 if (length_alleles_on_bag > 1) {
-  pr = TRUE
+  unique_allele = TRUE
 }
 ```
 
 ## Group alignment
 
 ```{r fig.width = 10, fig.height = 10}
-if(pr){
+if(unique_allele){
 sequences <- if (any(grepl("IGHV|IGLV|IGKV", imgt_genes))) {
   unique(imgt_bag_data$seq_gapped)
 } else {
@@ -79,26 +80,26 @@ alleles <- unique(imgt_bag_data$allele)
 ```
 
 ```{r}
-sep = ""
+message = ""
 
-if(pr){
-  sep = "Based on the viewed alleles, we calculated the distance between the germline sequences."
+if(unique_allele){
+  message = "Based on the viewed alleles, we calculated the distance between the germline sequences."
 }else {
-   sep = "Skipping Group alignment section: number of alleles < 1"
+   message = "Skipping Group alignment section: number of alleles < 1"
 }
 ```
 
-`r sep`
+`r message`
 
 ```{r fig.width = 10, fig.height = 10}
-if(pr){
+if(unique_allele){
 seq_align(sequences, alleles, imgt_genes)
 }
 
 ```
 
 ```{r fig.width = 12, fig.height = 10}
-if(pr){
+if(unique_allele){
 tagList(seq_align2(sequences, alleles, imgt_genes))
 }
 ```
@@ -121,7 +122,7 @@ DT::datatable(ordered_data)
 
 ## Allele Appearnces
 
-The plot visualizes the appearances and usage of alleles across a population, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and proper alignment to the germline starting position were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles.
+The plot visualizes the appearances and usage of alleles across a population, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and oper alignment to the germline starting position were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles.
 
 ```{r}
 # Step 1: Extract alleles from bag_data
@@ -166,16 +167,16 @@ alleles_with_counts <- imgt_bag_data %>%
 ```
 
 ```{r}
-sep = ""
+message = ""
 
 if(length(unique(alleles_with_counts$allele)) > 1){
-  sep = "The graph below shows the allele-based individual genotype inference for this allele group."
+  message = "The graph below shows the allele-based individual genotype inference for this allele group."
 }else {
-   sep = ""
+   message = ""
 }
 ```
 
-`r sep`
+`r message`
 
 ```{r fig.width = 10, fig.height = 10}
 
