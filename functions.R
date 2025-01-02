@@ -408,7 +408,6 @@ seq_align2 <-function(sequences, alleles, imgt_genes, chain = "IGH") {
       legend.position = "none"
     )
     
-    
     if (len < 80) {
       # Handle the case where len is less than 80
       p_list <- list(
