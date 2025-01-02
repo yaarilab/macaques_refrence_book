@@ -7,4 +7,489 @@ execute:
 format: html
 ---
 
- IGL ASC
+```{r}
+source("functions.R")
+  
+```
+
+```{r}
+
+library(dplyr)
+
+# Create new columns without renaming the existing ones
+bag_data <- bag_data %>%
+  mutate(
+    nonamer_3 = apply(select(., c("v_nonamer", "d_3_nonamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    heptamer_3 = apply(select(., c("v_heptamer", "d_3_heptamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    nonamer_5 = apply(select(., c("j_nonamer", "d_5_nonamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    heptamer_5 = apply(select(., c("j_heptamer", "d_5_heptamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    })
+  )
+
+```
+
+## Alleles table
+
+```{r fig.width = 15, fig.height = 10}
+library(DT)
+library(dplyr)
+
+bag_data <- bag_data[grepl("IGL",bag_data$allele),]
+
+chain_bag_data <- bag_data %>%
+  select(
+    chain, gene_type, ASC, allele, seq, seq_gapped,
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, samples_AIRRseq,samples_genomic,iglabel
+  ) %>%
+  group_by(chain, gene_type, ASC, allele, seq, seq_gapped, Family) %>%
+  summarize(
+    diffrent_rss = n(),
+    heptamer_3 = paste(heptamer_3, collapse = ","),
+    nonamer_3 = paste(nonamer_3, collapse = ","),
+    heptamer_5 = paste(heptamer_5, collapse = ","),
+    nonamer_5 = paste(nonamer_5, collapse = ","),
+    spacer_3 = paste(spacer_3, collapse = ","),
+    spacer_5 = paste(spacer_5, collapse = ","),
+    sample_count_genomic = length(unique(samples_genomic[samples_genomic != ""])),
+    sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
+     iglabel = paste0(unique(iglabel), collapse = ", "),
+    .groups = "drop" # Ensures the result is not grouped after summarizing
+  )%>%
+  select(
+    chain, gene_type, ASC, allele, seq, seq_gapped,
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, diffrent_rss, iglabel
+  )
+
+# Create the table with all columns, but hide additional ones
+DT::datatable(
+  chain_bag_data, # Include all columns
+  options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    columnDefs = list(
+      list(visible = FALSE, targets = c(6:17)) # Hide all columns except the first four
+    )
+  ),
+  callback = JS(
+    "
+    table.on('click', 'tr', function() {
+      var tr = $(this); // Get the clicked row
+      var rowData = table.row(this).data(); // Get all data for the clicked row
+      if (tr.next().hasClass('detail-row')) {
+        // If details row already exists, remove it
+        tr.next().remove();
+      } else {
+        // Construct detailed information using all columns
+        var details = '<tr class=\"detail-row\"><td colspan=\"4\">' +
+          '<strong>Chain:</strong> ' + rowData[1] + '<br>' +
+          '<strong>Gene Type:</strong> ' + rowData[2] + '<br>' +
+          '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
+          '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
+          '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
+          '<strong>Number of combinations:</strong> ' + rowData[16] + '<br>' +
+          '<strong>Seq:</strong> ' + rowData[5] + '<br>' +
+          '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>' +
+          '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
+          '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
+          '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
+          '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
+          '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>' +
+          '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>' +
+          '<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
+          '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
+          '<strong>More Details about this ASC:</strong> <a href=\"' + 'IG' + rowData[15] + '-' +  rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
+
+
+          '</td></tr>';
+        
+        // Insert the details row below the clicked row
+        tr.after(details);
+      }
+    });
+    "
+  )
+    )
+
+```
+
+```{r}
+bag_data <- bag_data %>%
+  mutate(al = str_extract(allele, "(?<=\\*).*"),
+         allele_cut = substr(allele, 3, nchar(allele)),
+         ASC = substr(ASC, 3, nchar(ASC)),
+         Family = substr(Family, 3, nchar(Family)))
+```
+
+```{r}
+
+library(plotly)
+library(htmltools)
+library(htmlwidgets)
+
+library(htmltools)
+library(htmlwidgets)
+
+
+# Generate a color palette with enough colors for unique families
+pal_family <- c(
+    "grey",
+  hcl.colors(12, palette = "Spectral"),
+  hcl.colors(12, palette = "Zissou1"),
+  hcl.colors(12, palette = "Roma"),
+  hcl.colors(12, palette = "Cividis")
+)
+
+# Function to assign consistent colors based on Family number
+get_family_color <- function(family) {
+  # Extract the numeric part of the family name (after the 4-letter prefix)
+  family_number <- as.numeric(gsub("^[A-Za-z]{2}", "", family))
+  # Use modulo to cycle through the available colors if needed
+  color_index <- ifelse(!is.na(family_number), family_number %% length(pal_family), 1)
+  return(pal_family[color_index+1])
+}
+
+create_sunburst_plot <- function(data, gene_type) {
+  # Prepare hierarchical data
+  all_data <- bind_rows(
+    # Level 1: Family
+    data %>%
+      filter(gene_type == gene_type) %>%
+      group_by(Family) %>%
+      summarize(value = n_distinct(allele)) %>%
+      mutate(level = "Family", category = Family, parent = "", color = sapply(Family, get_family_color)),
+
+    # Level 2: ASC
+    data %>%
+      filter(gene_type == gene_type) %>%
+      group_by(Family, ASC) %>%
+      summarize(value = n_distinct(allele)) %>%
+      mutate(level = "ASC", category = ASC, parent = Family, color = sapply(Family, get_family_color)),
+
+    # Level 3: Allele
+    data %>%
+      filter(gene_type == gene_type) %>%
+      group_by(allele,allele_cut, ASC, Family) %>%
+      summarize(
+        n = n(),
+        value = 1,
+        sample_count_genomic = sum(sample_count_genomic),
+        sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
+        heptamer_3 = paste0(heptamer_3, collapse = ", "),
+        heptamer_5 = paste0(heptamer_5, collapse = ", "),
+        nonamer_3 = paste0(nonamer_3, collapse = ", "),
+        nonamer_5 = paste0(nonamer_5, collapse = ", "),
+        seq = paste0(unique(seq), collapse = ", "),
+        iglabel = paste0(unique(iglabel), collapse = ", ")
+      ) %>%
+      mutate(
+        level = "Allele",
+        category = allele_cut,
+        parent = ASC,
+        hover_text = paste0(
+          allele,
+          "<br>Ig label: ", iglabel,
+          "<br>Genomic sample count: ", sample_count_genomic,
+          "<br>AIRRseq sample count: ", sample_count_AIRRseq,
+          "<br>heptamer_3: ", heptamer_3,
+          "<br>nonamer_3: ", nonamer_3,
+          "<br>heptamer_5: ", heptamer_5,
+          "<br>nonamer_5: ", nonamer_5
+        ),
+        color = get_family_color(Family)
+      )
+  )
+
+
+AIRRseq0_data <- all_data %>%
+    filter(!(level == "Allele" & sample_count_AIRRseq == 0)) %>%
+    # Keep only ASCs with valid children
+    filter(!(level == "ASC" & !category %in% parent[all_data$level == "Allele"])) %>%
+    # Keep only Families with valid children
+    filter(!(level == "Family" & !category %in% parent[all_data$level == "ASC"]))
+
+
+AIRRseq0_data <- AIRRseq0_data %>%
+    filter(parent == "" | parent %in% category)
+
+family_values <- AIRRseq0_data %>%
+    filter(level == "Allele") %>%
+    count(Family, name = "value") %>%
+    rename(category = Family)
+
+# Step 2: Calculate children counts for ASC level
+asc_values <- AIRRseq0_data %>%
+    filter(level == "Allele") %>%
+    count(parent, name = "value") %>%
+    rename(category = parent)
+
+# Step 3: Merge recalculated values back into filtered_data
+AIRRseq0_data <- AIRRseq0_data %>%
+    left_join(family_values, by = "category", suffix = c("", "_family")) %>%
+    left_join(asc_values, by = "category", suffix = c("", "_asc")) %>%
+    mutate(
+        value = case_when(
+            level == "Family" ~ coalesce(value_family, 0),  # Use Family values
+            level == "ASC" ~ coalesce(value_asc, 0),       # Use ASC values
+            level == "Allele" ~ 1                          # Leaf nodes have value = 1
+        )
+    ) %>%
+    select(-value_family, -value_asc) 
+
+
+baseline_data <- all_data %>%
+    filter(!(level == "Allele" & str_detect(allele,"_"))) %>%
+    # Keep only ASCs with valid children
+    filter(!(level == "ASC" & !category %in% parent[all_data$level == "Allele"])) %>%
+    # Keep only Families with valid children
+    filter(!(level == "Family" & !category %in% parent[all_data$level == "ASC"]))
+
+
+baseline_data <- baseline_data %>%
+    filter(parent == "" | parent %in% category)
+
+family_values <- baseline_data %>%
+    filter(level == "Allele") %>%
+    count(Family, name = "value") %>%
+    rename(category = Family)
+
+# Step 2: Calculate children counts for ASC level
+asc_values <- baseline_data %>%
+    filter(level == "Allele") %>%
+    count(parent, name = "value") %>%
+    rename(category = parent)
+
+# Step 3: Merge recalculated values back into filtered_data
+baseline_data <- baseline_data %>%
+    left_join(family_values, by = "category", suffix = c("", "_family")) %>%
+    left_join(asc_values, by = "category", suffix = c("", "_asc")) %>%
+    mutate(
+        value = case_when(
+            level == "Family" ~ coalesce(value_family, 0),  # Use Family values
+            level == "ASC" ~ coalesce(value_asc, 0),       # Use ASC values
+            level == "Allele" ~ 1                          # Leaf nodes have value = 1
+        )
+    ) %>%
+    select(-value_family, -value_asc)
+
+  # Create the plot
+  plot <- plot_ly(
+    type = "sunburst",
+    branchvalues = "total",
+    marker = list(colors = all_data$color)
+  )%>%
+    layout(title = gene_type)
+
+
+  # Add traces
+  plot <- plot %>%
+    add_trace(
+      data = all_data,
+      labels = ~category,
+      parents = ~parent,
+      values = ~value,
+      hovertext = ~hover_text,
+      hoverinfo = "text",
+      name = "All Data",
+       marker = list(colors = all_data$color),
+      visible = TRUE  # Initially visible
+    ) %>%
+    add_trace(
+      data = AIRRseq0_data,
+      labels = ~category,
+      parents = ~parent,
+      values = ~value,
+      hovertext = ~hover_text,
+      hoverinfo = "text",
+      name = "AIRRseq0_data",
+      marker = list(colors = AIRRseq0_data$color),
+      visible = FALSE  # Initially hidden
+    ) %>%
+    add_trace(
+      data = baseline_data,
+      labels = ~category,
+      parents = ~parent,
+      values = ~value,
+      hovertext = ~hover_text,
+      hoverinfo = "text",
+      name = "baseline_data",
+      marker = list(colors = baseline_data$color),
+      visible = FALSE  # Initially hidden
+    )
+
+  # Add buttons for toggling
+  plot <- plot %>%
+    layout(
+      updatemenus = list(
+        list(
+          type = "buttons",
+          direction = "down",
+          buttons = list(
+            list(
+              label = "All",
+              method = "update",
+              args = list(
+                list(visible = c(TRUE, FALSE, FALSE))
+              )
+            ),
+            list(
+              label = "baseline_data",
+              method = "update",
+              args = list(
+                list(visible = c(FALSE, TRUE, FALSE))
+              )
+            ),
+            list(
+              label = "AIRRseq count > 0",
+              method = "update",
+              args = list(
+                list(visible = c(FALSE, FALSE, TRUE))
+              )
+            )
+          )
+        )
+      )
+    )%>%
+    layout(title = gene_type)
+
+
+  return(plot)
+}
+
+# Create sunburst plots for each gene type
+plot_IGLV <- create_sunburst_plot(bag_data[grepl("LV",bag_data$Family),], "IGLV")
+plot_IGLJ <- create_sunburst_plot(bag_data[grepl("LJ",bag_data$Family),], "IGLJ")
+```
+
+## Alleles Visual Summary
+
+```{r }
+
+# Add JavaScript to display hover text for the currently visible plot
+plot_IGLV <- onRender(
+    plot_IGLV,
+  "
+  function(el, x) {
+    // Generate a unique ID for the hover box
+    var uniqueId = 'hoverTextBox_' + Math.random().toString(36).substr(2, 9);
+
+    // Create a new div to display hover text
+    var hoverDiv = document.createElement('div');
+    hoverDiv.innerHTML = '<input type=\"text\" id=\"' + uniqueId + '\" style=\"width: 100%;\" placeholder=\"Hover text will appear here...\" />';
+    el.parentNode.insertBefore(hoverDiv, el);
+
+    // Function to determine the currently visible trace
+    function getVisibleTraces() {
+      return x.data.map(function(trace, index) {
+        return (trace.visible === true || trace.visible === undefined) ? index : -1;
+      }).filter(function(index) {
+        return index !== -1;
+      });
+    }
+
+    // Function to copy text to the clipboard
+    function copyToClipboard(text) {
+      var tempInput = document.createElement('textarea');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+    }
+
+    // Capture hover event and display only the text before the first <br>
+    el.on('plotly_hover', function(data) {
+      var visibleTraces = getVisibleTraces();
+      var traceIndex = data.points[0].curveNumber;
+
+      if (visibleTraces.includes(traceIndex)) {
+        var hoverText = data.points[0].hovertext;
+        var firstPart = hoverText.split('<br>')[0]; // Extract text before the first <br>
+        document.getElementById(uniqueId).value = firstPart; // Display the extracted text
+        
+        // Automatically copy the firstPart to clipboard
+        copyToClipboard(firstPart);
+      }
+    });
+
+    // Update the hover text based on visibility changes
+    el.on('plotly_restyle', function() {
+      document.getElementById(uniqueId).value = ''; // Clear hover text on restyle
+    });
+  }
+  "
+)
+
+# Display the plot
+plot_IGLV
+```
+
+```{r}
+plot_IGLJ <- onRender(
+    plot_IGLJ,
+  "
+  function(el, x) {
+    // Generate a unique ID for the hover box
+    var uniqueId = 'hoverTextBox_' + Math.random().toString(36).substr(2, 9);
+
+    // Create a new div to display hover text
+    var hoverDiv = document.createElement('div');
+    hoverDiv.innerHTML = '<input type=\"text\" id=\"' + uniqueId + '\" style=\"width: 100%;\" placeholder=\"Hover text will appear here...\" />';
+    el.parentNode.insertBefore(hoverDiv, el);
+
+    // Function to determine the currently visible trace
+    function getVisibleTraces() {
+      return x.data.map(function(trace, index) {
+        return (trace.visible === true || trace.visible === undefined) ? index : -1;
+      }).filter(function(index) {
+        return index !== -1;
+      });
+    }
+
+    // Function to copy text to the clipboard
+    function copyToClipboard(text) {
+      var tempInput = document.createElement('textarea');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+    }
+
+    // Capture hover event and display only the text before the first <br>
+    el.on('plotly_hover', function(data) {
+      var visibleTraces = getVisibleTraces();
+      var traceIndex = data.points[0].curveNumber;
+
+      if (visibleTraces.includes(traceIndex)) {
+        var hoverText = data.points[0].hovertext;
+        var firstPart = hoverText.split('<br>')[0]; // Extract text before the first <br>
+        document.getElementById(uniqueId).value = firstPart; // Display the extracted text
+        
+        // Automatically copy the firstPart to clipboard
+        copyToClipboard(firstPart);
+      }
+    });
+
+    // Update the hover text based on visibility changes
+    el.on('plotly_restyle', function() {
+      document.getElementById(uniqueId).value = ''; // Clear hover text on restyle
+    });
+  }
+  "
+)
+# Display the plot
+plot_IGLJ
+```
