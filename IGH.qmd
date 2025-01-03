@@ -16,6 +16,16 @@ source("functions.R")
 ```
 
 ```{r}
+source_columns <- c("genbank", "kimdb", "rhgldb+", "imgt", "trios", "vrc", "guo")
+
+# Create the `source` column in data.table
+bag_data[, source := apply(.SD, 1, function(row) {
+  paste(names(row)[row != ""], collapse = ",")
+}), .SDcols = source_columns]
+
+```
+
+```{r}
 
 library(dplyr)
 
@@ -50,11 +60,11 @@ library(dplyr)
 
 bag_data <- bag_data[grepl("IGH",bag_data$allele),]
 
-chain_bag_data <- bag_data %>%
+chain_bag_data <-bag_data %>%
   select(
     chain, gene_type, ASC, allele, seq, seq_gapped,
     heptamer_3, nonamer_3, heptamer_5, nonamer_5,
-    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, samples_AIRRseq,samples_genomic,iglabel
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family,iglabel,source, l_part1,l_part2
   ) %>%
   group_by(chain, gene_type, ASC, allele, seq, seq_gapped, Family) %>%
   summarize(
@@ -65,15 +75,18 @@ chain_bag_data <- bag_data %>%
     nonamer_5 = paste(nonamer_5, collapse = ","),
     spacer_3 = paste(spacer_3, collapse = ","),
     spacer_5 = paste(spacer_5, collapse = ","),
-    sample_count_genomic = length(unique(samples_genomic[samples_genomic != ""])),
-    sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
+    sample_count_genomic = sample_count_genomic,
+    sample_count_AIRRseq = sample_count_AIRRseq,
      iglabel = paste0(unique(iglabel), collapse = ", "),
+     source =  paste0(unique(source), collapse = ", "),
+     l_part1 = paste0(unique(l_part1), collapse = ", "),
+      l_part2 = paste0(unique(l_part2), collapse = ", "),
     .groups = "drop" # Ensures the result is not grouped after summarizing
   )%>%
   select(
     chain, gene_type, ASC, allele, seq, seq_gapped,
     heptamer_3, nonamer_3, heptamer_5, nonamer_5,
-    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, diffrent_rss, iglabel
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, diffrent_rss, iglabel,source,l_part1,l_part2
   )
 
 # Create the table with all columns, but hide additional ones
@@ -83,7 +96,7 @@ DT::datatable(
     dom = 'Bfrtip',
     buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
     columnDefs = list(
-      list(visible = FALSE, targets = c(6:17)) # Hide all columns except the first four
+      list(visible = FALSE, targets = c(6:20)) # Hide all columns except the first four
     )
   ),
   callback = JS(
@@ -102,6 +115,7 @@ DT::datatable(
           '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
           '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
           '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
+           '<strong>Source:</strong> ' + rowData[18] + '<br>' +
           '<strong>Number of combinations:</strong> ' + rowData[16] + '<br>' +
           '<strong>Seq:</strong> ' + rowData[5] + '<br>' +
           '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>' +
@@ -111,9 +125,11 @@ DT::datatable(
           '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
           '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>' +
           '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>' +
+           '<strong>l_part1:</strong> ' + rowData[19] + '<br>' +
+          '<strong>l_part2:</strong> ' + rowData[20] + '<br>' +
           '<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
           '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
-          '<strong>More Details about this ASC:</strong> <a href=\"' + 'IG' + rowData[15] + '-' +  rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
+          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
 
 
           '</td></tr>';
@@ -125,7 +141,6 @@ DT::datatable(
     "
   )
     )
-
 ```
 
 ```{r}
