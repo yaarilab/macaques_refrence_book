@@ -19,7 +19,6 @@ source("functions.R")
 library(dplyr)
 library(plotly)
 library(gridExtra)
-  
 ```
 
 ```{r}

@@ -11499,5 +11499,12 @@
     "title": "IGLV9-DGNA",
     "section": "Allele Appearances",
     "text": "Allele Appearances\nThe plot visualizes the Frequencyand usage of alleles across a population as observed in both AIRR-seq and genomic data, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and alignment starting at position one of the V germline were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles.\nThe usage of each allele across the repertoires in which it appears.\n\n\n\n\n\n\nNumber of Individuals With Allele Presence Across Genomic and Repertoire Datasets.\n\n\n\n\n\n\nThe graph below shows the allele-based individual genotype inference for this allele group."
+  },
+  {
+    "objectID": "IGH.html#allele-visual-summary",
+    "href": "IGH.html#allele-visual-summary",
+    "title": "IGH",
+    "section": "Allele visual summary",
+    "text": "Allele visual summary"
   }
 ]

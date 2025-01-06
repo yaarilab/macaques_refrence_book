@@ -9,7 +9,6 @@ format: html
 
 ```{r}
 source("functions.R")
-  
 ```
 
 ```{r}
