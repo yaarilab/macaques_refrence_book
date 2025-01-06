@@ -12,7 +12,7 @@ pacman::p_load('dplyr', 'tidyr', 'htmltools', 'bbplot', 'scales', 'data.table', 
 #IGK_df <- read.csv("03_12_IGK_allele_reference_table.csv")
 #bag_data <- bind_rows(IGH_df, IGL_df, IGK_df)
 
-bag_data <- fread("usofa_with_rss_and_leader_and_asc_2024-12-31.csv")
+bag_data <- fread("usofa_with_rss_and_leader_and_asc_2025-01-04.csv")
 setnames(bag_data, "allele", "old_name")
 bag_data[, allele := new_tag]  # Assuming new names match old names
 
@@ -22,24 +22,52 @@ bag_data[, `:=`(
   Family = sub("-.*", "", allele),
   chain = substr(allele, 1, 3)
 )]
-optimized_thresholds <- fread("optimized_thresholds.tsv")
 
-data_ <- fread("filter_d_20_12_rep_data.csv")
+data_ <- fread("filter_20_12_rep_data.csv")
 setnames(data_, "allele", "old_allele")
-
 # Update allele in data_ based on bag_data
-data_[, allele := bag_data[match(old_allele, old_name), allele]]
-
+data_[, allele := bag_data[match(old_allele, allele_distribution_2024_06_24), new_tag]]
 data_[, frac := count / sum_count]
 data_[, frac_allele := count / sum_count]
 
+
+optimized_thresholds_f <- fread("thresholds_table.tsv")
+setnames(optimized_thresholds_f, "allele", "old_allele")
+optimized_thresholds_f[, allele := bag_data[match(old_allele, allele_distribution_2024_06_24), new_tag]]
+
+bag_data[, main_allele := ifelse(
+  allele_distribution_2024_06_24 == "" | is.na(allele_distribution_2024_06_24), 
+  allele, 
+  sub("_.*", "", allele_distribution_2024_06_24)
+)]
+
+
+# Step 3: Prepare a new `bag_data` table with only the `allele` and updated `threshold`
+bag_threshold <- bag_data[, .(allele, main_allele)]
+
+optimized_thresholds <- merge(
+  bag_threshold,
+  optimized_thresholds_f,
+  by = "allele",
+  all.x = TRUE
+)
+
+# Step 2: Assign default thresholds for rows with NA in `threshold`
+optimized_thresholds[, threshold := fifelse(
+  is.na(threshold), 
+  fifelse(
+    grepl("IGHV", main_allele), 1e-04,  # Default for IGHV
+    1e-03                             # Default for other gene types
+  ),
+  threshold
+)]
 
 
 allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
   
   result <- imgt_bag_data %>%
     select(allele, samples_AIRRseq, samples_genomic) %>%
-    rowwise() %>%
+    group_by(allele)%>%
     mutate(
       samples_genomic = if_else(is.na(samples_genomic), list(""), strsplit(samples_genomic, ",")),
       samples_AIRRseq = if_else(is.na(samples_AIRRseq), list(""), strsplit(samples_AIRRseq, ","))
@@ -54,6 +82,7 @@ allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
                                     .[. != "" & !is.na(.)])
     )
 
+  result <- unique(result)
 
   # Reshape for plotting
   result_long <- result %>%
@@ -102,24 +131,12 @@ allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
     )
     
 
-  p1<-ggplotly(p, height = height, width = height)
+  p1<-ggplotly(p, height = height-height/10, width = height)
   
-  p <- ggplot(data_, aes(x = imgt_call, y = frac_allele,text = paste0(paste("</br>allele : ",allele,
-                                                                            "</br>sample: ", sample)))) +
-    geom_boxplot() + # This adds the box plot # Flip coordinates if you still want horizontal boxes
-    geom_point(position = position_jitter(width = 0.2), alpha = 1, size = 1.5) +
-    # Specify colors for 'yes' and 'no'
-    scale_color_manual(values = c("yes" = alpha("darkblue", 1), "no" = alpha("#74A089", 1))) +
-    labs(x = "Allele", y = "frec") + 
-    theme_minimal() +
-    theme(legend.position = "bottom",
-          axis.text.x = element_blank(),
-          axis.text.y = element_text(size = 10),
-          axis.title = element_text(size = 12))
   
   p <- ggplot(data_, 
-       aes(x = imgt_call, y = frac_allele,
-           text = paste0("</br>allele : ", allele, "</br>sample: ", sample))) +
+       aes(x = allele, y = frac_allele,
+           text = paste0("sample: ", sample))) +
     geom_boxplot() + # Add boxplot to show the distribution
     geom_point(data = subset(data_, frac_allele != 0), 
                aes(color = factor(frac_allele != 0)), # Add color aesthetic if needed
@@ -127,22 +144,31 @@ allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
                alpha = 1, size = 1.5) +
     scale_color_manual(values = c("TRUE" = alpha("red", 1)),
                        guide = "none") + # Hide legend if not needed
-    labs(x = "Allele", y = "Frequency") + 
+    labs(x = "Allele", y = "Usage (%)") + 
     theme_minimal() +
-    theme(legend.position = "none",
-          axis.text.x = element_blank(),
-          axis.text.y = element_text(size = 10),
-          axis.title = element_text(size = 12))
+    theme(
+      legend.position = "bottom",
+      axis.text.x = element_text(
+        angle = 90,
+        hjust = 1,
+        size = 10
+      ),
+      axis.text.y = element_text(
+        size = 10
+      ), 
+      axis.title = element_text(size = 14)
+    )
 
 
 
-  p2<-ggplotly(p, height = height, width = height)
+  p2<-ggplotly(p, height = height-height/10, width = height)
   
   sub_p1 <- subplot(p2, # boxplot and point - decrease size of points and remove legend
                     p1,
                     nrows = 2, margin = 0.007)
   
-  return(sub_p1)
+    return(list(p1 = ggplotly(p1, height = height-height/10, width = height-height/4),
+              p2 = ggplotly(p2, height = height-height/10, width = height)))
   
 }
 
@@ -259,7 +285,7 @@ seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") {
         legend.position = "none"
       ) +
       scale_y_continuous(limits = c(-0.035, NA), sec.axis = sec_axis(~ . * nucs, name = "Mutations")) +
-      ylab("Ratio")
+      ylab("distance(nt)")
     
     pg <- ggplotly(p_dend)%>% layout(margin = list(l = 75))
     return(pg)
@@ -271,11 +297,14 @@ seq_align2 <-function(sequences, alleles, imgt_genes, chain = "IGH") {
 
 # Assuming you have an allele column in your data
   alignment <- DNAStringSet(msa(sequences, type = "dna"))
-  sequences <- as.character(alignment)
+  sequences <- as.character(alignment)  
+  
   len <-nchar(sequences[1])
 
     matrix_sequences <-
       as.data.frame(sapply(sequences, seqinr::s2c), stringsAsFactors = F)
+
+
       
     names(matrix_sequences) = alleles
 
@@ -414,16 +443,28 @@ seq_align2 <-function(sequences, alleles, imgt_genes, chain = "IGH") {
         plot_align(matrix_sequences_plot, 1, len, hotspot)
       )
     } else {
-      # Standard case where len >= 80
-      p_list <- apply(data.frame(
-                      low_bound = seq(1, len, by = 80),
-                      upper_bound = c(seq(81, len, by = 80), len)
-                      ),
-                      1, function(x) {
-                        plot_align(matrix_sequences_plot, x[1], x[2], hotspot)
-                      })
+      # Define the chunk size
+      chunk_size <- 80
+      
+      # Calculate the number of chunks
+      num_chunks <- ceiling(len / chunk_size)
+      
+      # Adjust len to make it a multiple of chunk_size by padding
+      padded_len <- num_chunks * chunk_size
+      
+      # Create bounds for all chunks with the same width
+      bounds <- data.frame(
+        low_bound = seq(1, padded_len, by = chunk_size),
+        upper_bound = seq(chunk_size, padded_len, by = chunk_size)
+      )
+      
+      # Apply plot_align to each range
+      p_list <- apply(bounds, 1, function(x) {
+        xmin <- x[1]  # Calculate xmin
+        xmax <- x[2]  # Calculate xmax
+        plot_align(matrix_sequences_plot, xmin, xmax, hotspot)
+      })
     }
-    
 
     p_list
     

@@ -9,7 +9,6 @@ format: html
 
 ```{r}
 source("functions.R")
-
 ```
 
 ```{r,echo=FALSE}
@@ -110,19 +109,14 @@ Observing the alleles frequencies we adapted the following thresholds
 
 ```{r fig.width = 10, fig.height = 10}
 library(DT)
-
 # Create a data frame with ordered alleles
-ordered_data <- optimized_thresholds[optimized_thresholds$gene == imgt_genes, c("allele", "threshold")]
+ordered_data <- optimized_thresholds[grepl(imgt_genes,optimized_thresholds$allele) , c("allele", "threshold")]
 ordered_data <- ordered_data[order(ordered_data$allele), ]  # Order by allele
-
 # Create the datatable
-DT::datatable(ordered_data)
-
+DT::datatable(unique(ordered_data))
 ```
 
-## Allele Appearnces
-
-The plot visualizes the appearances and usage of alleles across a population, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and oper alignment to the germline starting position were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles.
+## Allele Appearances
 
 ```{r}
 # Step 1: Extract alleles from bag_data
@@ -155,15 +149,80 @@ data1 <- data1 %>%
   arrange(allele)
 ```
 
+```{r}
+
+alleles_with_any_counts <- imgt_bag_data %>%
+  filter(sample_count_AIRRseq > 0 | sample_count_genomic >0) %>%
+  select(allele)
+
+message = ""
+
+if(length(unique(alleles_with_any_counts$allele)) < 1){
+  message = "None of the alleles appear in both the genomic and AIRR-seq datasets."
+}else {
+   message = "The plot visualizes the Frequencyand usage of alleles across a population as observed in both AIRR-seq and genomic data, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and alignment starting at position one of the V germline were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles."
+}
+```
+
+`r message`
+
 ```{r fig.width = 10, fig.height = 10}
-allele_appearance(data1, imgt_genes, imgt_bag_data)%>%   layout(     autosize = F,     width = 800,     height = 700    )
+plots = ""
+if (length(unique(alleles_with_any_counts$allele)) > 1) {
+   plots <- allele_appearance(data1, imgt_genes, imgt_bag_data)
+}
+
+
+message1 = ""
+
+if(length(plots) < 1){
+  message1 = ""
+}else {
+   message1 = "The usage of each allele across the repertoires in which it appears."
+}
+
+
+message2 = ""
+
+if(length(plots) < 1){
+  message2 = ""
+}else {
+   message2 = "Number of Individuals With Allele Presence Across Genomic and Repertoire Datasets."
+}
+```
+
+`r message1`
+
+```{r fig.width = 10, fig.height = 10}
+if (length(plots) > 1) {
+  # Extract individual plots and apply layout
+plots$p2 %>%
+    layout(
+      autosize = FALSE,
+      width = 800,
+      height = 700
+    )
+}
+```
+
+`r message2`
+
+```{r fig.width = 10, fig.height = 10}
+if (length(plots) > 1) {
+  # Extract individual plots and apply layout
+plots$p1 %>%
+    layout(
+      autosize = FALSE,
+      width = 800,
+      height = 700
+    )
+}
 ```
 
 ```{r fig.width = 10, fig.height = 10}
 alleles_with_counts <- imgt_bag_data %>%
   filter(sample_count_AIRRseq > 0) %>%
   select(allele)
-
 ```
 
 ```{r}

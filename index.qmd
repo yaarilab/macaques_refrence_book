@@ -1,5 +1,5 @@
 ---
-title: "Ig alleles browser"
+title: "rm ig allele browser"
 execute:
   echo: false
   warning: false
@@ -9,10 +9,10 @@ format: html
 
 ### 
 
-| [**IGH**](IGH.html)                                       | [**IGL**](IGL.html)                                       | [**IGK**](IGK.html)                                       |
+| [**IGH**](IGH.html)                                     | [**IGL**](IGL.html)                                     | [**IGK**](IGK.html)                                     |
 |------------------------|------------------------|------------------------|
-| [Alleles Table](IGH.html#alleles-table)                   | [Alleles Table](IGL.html#alleles-table)                   | [Alleles Table](IGK.html#alleles-table)                   |
-| [Alleles Visual Summary](IGH.html#Alleles-Visual-Summary) | [Alleles Visual Summary](IGL.html#Alleles-Visual-Summary) | [Alleles Visual Summary](IGK.html#Alleles-Visual-Summary) |
+| [Allele table](IGH.html#allele-table)                   | [Allele table](IGL.html#allele-table)                   | [Allele table](IGK.html#allele-table)                   |
+| [Allele visual Summary](IGH.html#Allele-visual-summary) | [Allele visual summary](IGL.html#Allele-visual-summary) | [Allele visual summary](IGK.html#Allele-visual-summary) |
 
 ```{r}
 source("functions.R")
@@ -28,7 +28,14 @@ source_columns <- c("genbank", "kimdb", "rhgldb+", "imgt", "trios", "vrc", "guo"
 
 # Create the `source` column in data.table
 bag_data[, source := apply(.SD, 1, function(row) {
-  paste(names(row)[row != ""], collapse = ",")
+  paste0(
+    unlist(
+      mapply(function(col_name, value) {
+        if (value != "") paste(col_name, ": ", value) else NULL
+      }, names(row), row)
+    ), 
+    collapse = ", "
+  )
 }), .SDcols = source_columns]
 
 ```
@@ -66,7 +73,7 @@ bag_data <- bag_data %>%
   select(
     chain, gene_type, ASC, allele, seq, seq_gapped,
     heptamer_3, nonamer_3, heptamer_5, nonamer_5,
-    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family,iglabel,source, l_part1,l_part2
+    spacer_3, spacer_5, Family,iglabel,source, l_part1,l_part2,samples_genomic,samples_AIRRseq
   ) %>%
   group_by(chain, gene_type, ASC, allele, seq, seq_gapped, Family) %>%
   summarize(
@@ -77,8 +84,8 @@ bag_data <- bag_data %>%
     nonamer_5 = paste(nonamer_5, collapse = ","),
     spacer_3 = paste(spacer_3, collapse = ","),
     spacer_5 = paste(spacer_5, collapse = ","),
-    sample_count_genomic = sample_count_genomic,
-    sample_count_AIRRseq = sample_count_AIRRseq,
+    sample_count_genomic = length(unique(unlist(strsplit(samples_genomic, ", ")))),
+    sample_count_AIRRseq = length(unique(unlist(strsplit(samples_AIRRseq, ", ")))),
      iglabel = paste0(unique(iglabel), collapse = ", "),
      source =  paste0(unique(source), collapse = ", "),
      l_part1 = paste0(unique(l_part1), collapse = ", "),
@@ -117,19 +124,33 @@ DT::datatable(
           '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
           '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
           '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
-           '<strong>Source:</strong> ' + rowData[18] + '<br>' +
+           '<strong>Appears also at:</strong> ' + rowData[18] + '<br>' +
           '<strong>Number of combinations:</strong> ' + rowData[16] + '<br>' +
-          '<strong>Seq:</strong> ' + rowData[5] + '<br>' +
-          '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>' +
-          '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
-          '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
-          '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
-          '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
-          '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>' +
-          '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>' +
-           '<strong>l_part1:</strong> ' + rowData[19] + '<br>' +
-          '<strong>l_part2:</strong> ' + rowData[20] + '<br>' +
-          '<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
+          '<strong>Seq:</strong> ' + rowData[5] + '<br>'
+
+       if (rowData[2].includes('V')) {
+         details += '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>';
+       } 
+
+      // Include Heptamer/Nonamer and Spacer based on Gene Type
+      if (!rowData[2].includes('V')) {
+        details += '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
+                   '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
+                   '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>';
+      }
+      if (!rowData[2].includes('J')) {
+        details += '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
+                   '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
+                   '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>';
+      }
+      
+      // Add l_part1 and l_part2 only if rowData[2] contains 'V'
+      if (rowData[2].includes('V')) {
+        details += '<strong>l_part1:</strong> ' + rowData[19] + '<br>' +
+                   '<strong>l_part2:</strong> ' + rowData[20] + '<br>';
+      }
+
+          details +='<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
           '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
           '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
 
@@ -142,5 +163,5 @@ DT::datatable(
     });
     "
   )
-    )
+)
 ```

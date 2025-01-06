@@ -1,0 +1,18 @@
+{
+  "hash": "00bd80456c51ade3bfee746d0b009548",
+  "result": {
+    "markdown": "---\ntitle: 'IGHV0-QKFW'\nexecute:\n  echo: false\n  warning: false\n  message: false\nformat: html\n---\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n\n## \n\nThe ASC IGHV0-QKFW includes 1 alleles in the bag of alleles, 1 alleles was in the baseline. one novel allele was found in the genomic data, one novel allele was found in the AIRRseq data only .<br> 1 alleles from the bag was found in the genotype of at least one subject, 0 of which are from the baseline.\n\n\n::: {.cell}\n\n:::\n\n\n## Group alignment\n\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n\nSkipping Group alignment section: number of alleles < 1\n\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n\n### Allele specific cutoff\n\nObserving the alleles frequencies we adapted the following thresholds\n\n\n::: {.cell}\n::: {.cell-output-display}\n```{=html}\n<div class=\"datatables html-widget html-fill-item-overflow-hidden html-fill-item\" id=\"htmlwidget-fc06b1d1ce1ee922da1e\" style=\"width:100%;height:auto;\"></div>\n<script type=\"application/json\" data-for=\"htmlwidget-fc06b1d1ce1ee922da1e\">{\"x\":{\"filter\":\"none\",\"vertical\":false,\"data\":[[\"1\"],[\"IGHV0-QKFW*01\"],[0.0001]],\"container\":\"<table class=\\\"display\\\">\\n  <thead>\\n    <tr>\\n      <th> <\\/th>\\n      <th>allele<\\/th>\\n      <th>threshold<\\/th>\\n    <\\/tr>\\n  <\\/thead>\\n<\\/table>\",\"options\":{\"columnDefs\":[{\"className\":\"dt-right\",\"targets\":2},{\"orderable\":false,\"targets\":0},{\"name\":\" \",\"targets\":0},{\"name\":\"allele\",\"targets\":1},{\"name\":\"threshold\",\"targets\":2}],\"order\":[],\"autoWidth\":false,\"orderClasses\":false},\"selection\":{\"mode\":\"multiple\",\"selected\":null,\"target\":\"row\",\"selectable\":null}},\"evals\":[],\"jsHooks\":[]}</script>\n```\n:::\n:::\n\n\n## Allele Appearances\n\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n\nNone of the alleles appear in both the genomic and AIRR-seq datasets.\n\n\n::: {.cell}\n\n:::\n\n\nThe usage of each allele across the repertoires in which it appears.\n\n\n::: {.cell}\n\n:::\n\n\nNumber of Individuals With Allele Presence Across Genomic and Repertoire Datasets.\n\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n\n\n\n\n\n::: {.cell}\n\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"site_libs/htmlwidgets-1.6.2/htmlwidgets.js\"></script>\r\n<link href=\"site_libs/datatables-css-0.0.0/datatables-crosstalk.css\" rel=\"stylesheet\" />\r\n<script src=\"site_libs/datatables-binding-0.32/datatables.js\"></script>\r\n<script src=\"site_libs/jquery-3.6.0/jquery-3.6.0.min.js\"></script>\r\n<link href=\"site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css\" rel=\"stylesheet\" />\r\n<link href=\"site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css\" rel=\"stylesheet\" />\r\n<script src=\"site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js\"></script>\r\n<link href=\"site_libs/crosstalk-1.2.1/css/crosstalk.min.css\" rel=\"stylesheet\" />\r\n<script src=\"site_libs/crosstalk-1.2.1/js/crosstalk.min.js\"></script>\r\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

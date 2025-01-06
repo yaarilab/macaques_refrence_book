@@ -20,7 +20,14 @@ source_columns <- c("genbank", "kimdb", "rhgldb+", "imgt", "trios", "vrc", "guo"
 
 # Create the `source` column in data.table
 bag_data[, source := apply(.SD, 1, function(row) {
-  paste(names(row)[row != ""], collapse = ",")
+  paste0(
+    unlist(
+      mapply(function(col_name, value) {
+        if (value != "") paste(col_name, ": ", value) else NULL
+      }, names(row), row)
+    ), 
+    collapse = ", "
+  )
 }), .SDcols = source_columns]
 
 ```
@@ -52,7 +59,7 @@ bag_data <- bag_data %>%
 
 ```
 
-## Alleles table
+## Allele table
 
 ```{r fig.width = 15, fig.height = 10}
 library(DT)
@@ -64,7 +71,7 @@ chain_bag_data <-bag_data %>%
   select(
     chain, gene_type, ASC, allele, seq, seq_gapped,
     heptamer_3, nonamer_3, heptamer_5, nonamer_5,
-    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family,iglabel,source, l_part1,l_part2
+    spacer_3, spacer_5, Family,iglabel,source, l_part1,l_part2,samples_genomic,samples_AIRRseq
   ) %>%
   group_by(chain, gene_type, ASC, allele, seq, seq_gapped, Family) %>%
   summarize(
@@ -75,8 +82,8 @@ chain_bag_data <-bag_data %>%
     nonamer_5 = paste(nonamer_5, collapse = ","),
     spacer_3 = paste(spacer_3, collapse = ","),
     spacer_5 = paste(spacer_5, collapse = ","),
-    sample_count_genomic = sample_count_genomic,
-    sample_count_AIRRseq = sample_count_AIRRseq,
+    sample_count_genomic = length(unique(unlist(strsplit(samples_genomic, ", ")))),
+    sample_count_AIRRseq = length(unique(unlist(strsplit(samples_AIRRseq, ", ")))),
      iglabel = paste0(unique(iglabel), collapse = ", "),
      source =  paste0(unique(source), collapse = ", "),
      l_part1 = paste0(unique(l_part1), collapse = ", "),
@@ -115,19 +122,31 @@ DT::datatable(
           '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
           '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
           '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
-           '<strong>Source:</strong> ' + rowData[18] + '<br>' +
+           '<strong>Appears also at:</strong> ' + rowData[18] + '<br>' +
           '<strong>Number of combinations:</strong> ' + rowData[16] + '<br>' +
-          '<strong>Seq:</strong> ' + rowData[5] + '<br>' +
-          '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>' +
-          '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
-          '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
-          '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
-          '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
-          '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>' +
-          '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>' +
-           '<strong>l_part1:</strong> ' + rowData[19] + '<br>' +
-          '<strong>l_part2:</strong> ' + rowData[20] + '<br>' +
-          '<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
+          '<strong>Seq:</strong> ' + rowData[5] + '<br>'
+
+            if (rowData[2].includes('V')) {
+              details += '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>';
+            }
+                // Include Heptamer/Nonamer and Spacer based on Gene Type
+            if (!rowData[2].includes('V')) {
+              details += '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
+                        '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
+                        '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>';
+            }
+            if (!rowData[2].includes('J')) {
+              details += '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
+                        '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
+                        '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>';
+            }
+            
+            // Add l_part1 and l_part2 only if rowData[2] contains 'V'
+            if (rowData[2].includes('V')) {
+              details += '<strong>l_part1:</strong> ' + rowData[19] + '<br>' +
+                        '<strong>l_part2:</strong> ' + rowData[20] + '<br>';
+            }
+          details +='<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
           '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
           '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
 
@@ -152,6 +171,7 @@ bag_data <- bag_data %>%
 ```
 
 ```{r}
+
 
 library(plotly)
 library(htmltools)
@@ -197,14 +217,14 @@ create_sunburst_plot <- function(data, gene_type) {
       mutate(level = "ASC", category = ASC, parent = Family, color = sapply(Family, get_family_color)),
 
     # Level 3: Allele
-    data %>%
+    t<-data %>%
       filter(gene_type == gene_type) %>%
       group_by(allele,allele_cut, ASC, Family) %>%
       summarize(
         n = n(),
         value = 1,
-        sample_count_genomic = sum(sample_count_genomic),
-        sample_count_AIRRseq = length(unique(samples_AIRRseq[samples_AIRRseq != ""])),
+        sample_count_genomic = length(unique(unlist(strsplit(samples_genomic, ", ")))),
+        sample_count_AIRRseq = length(unique(unlist(strsplit(samples_AIRRseq, ", ")))),
         heptamer_3 = paste0(heptamer_3, collapse = ", "),
         heptamer_5 = paste0(heptamer_5, collapse = ", "),
         nonamer_3 = paste0(nonamer_3, collapse = ", "),
@@ -221,10 +241,18 @@ create_sunburst_plot <- function(data, gene_type) {
           "<br>Ig label: ", iglabel,
           "<br>Genomic sample count: ", sample_count_genomic,
           "<br>AIRRseq sample count: ", sample_count_AIRRseq,
-          "<br>heptamer_3: ", heptamer_3,
-          "<br>nonamer_3: ", nonamer_3,
-          "<br>heptamer_5: ", heptamer_5,
-          "<br>nonamer_5: ", nonamer_5
+          if (!grepl("IGHV", allele)) {
+            paste0(
+              "<br>5 Heptamer: ", heptamer_5,
+              "<br>5 Nonamer: ", nonamer_5
+            )
+          },
+          if (!grepl("IGHJ", allele)) {
+            paste0(
+              "<br>3 Heptamer: ", heptamer_3,
+              "<br>3 Nonamer: ", nonamer_3
+            )
+          }
         ),
         color = get_family_color(Family)
       )
@@ -346,7 +374,6 @@ baseline_data <- baseline_data %>%
       marker = list(colors = baseline_data$color),
       visible = FALSE  # Initially hidden
     )
-
   # Add buttons for toggling
   plot <- plot %>%
     layout(
@@ -356,21 +383,21 @@ baseline_data <- baseline_data %>%
           direction = "down",
           buttons = list(
             list(
-              label = "All",
+              label = "All alleles",
               method = "update",
               args = list(
                 list(visible = c(TRUE, FALSE, FALSE))
               )
             ),
             list(
-              label = "baseline_data",
+              label = "Only alleles in the baseline",
               method = "update",
               args = list(
                 list(visible = c(FALSE, TRUE, FALSE))
               )
             ),
             list(
-              label = "AIRRseq count > 0",
+              label = "Only alleles found in AIRRseq",
               method = "update",
               args = list(
                 list(visible = c(FALSE, FALSE, TRUE))
@@ -392,7 +419,7 @@ plot_IGHD <- create_sunburst_plot(bag_data[grepl("HD",bag_data$Family),], "IGHD"
 plot_IGHJ <- create_sunburst_plot(bag_data[grepl("HJ",bag_data$Family),], "IGHJ")
 ```
 
-## Alleles Visual Summary
+## Allele visual summary
 
 ```{r }
 
