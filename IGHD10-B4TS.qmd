@@ -9,6 +9,7 @@ format: html
 
 ```{r}
 source("functions.R")
+
 ```
 
 ```{r,echo=FALSE}
@@ -90,14 +91,13 @@ if(unique_allele){
 
 `r message`
 
-```{r fig.width = 10, fig.height = 10}
+```{r fig.width = 10, fig.height = 10, warning = FALSE, message = FALSE, echo = FALSE}
 if(unique_allele){
 seq_align(sequences, alleles, imgt_genes)
 }
-
 ```
 
-```{r fig.width = 12, fig.height = 10}
+```{r fig.width = 12, fig.height = 10, warning = FALSE, message = FALSE, echo = FALSE}
 if(unique_allele){
 tagList(seq_align2(sequences, alleles, imgt_genes))
 }
@@ -157,10 +157,10 @@ alleles_with_any_counts <- imgt_bag_data %>%
 
 message = ""
 
-if(length(unique(alleles_with_any_counts$allele)) < 1){
-  message = "None of the alleles appear in both the genomic and AIRR-seq datasets."
+if(length(unique(alleles_with_any_counts$allele)) >= 1){
+  message = "The plot visualizes the Frequencyand usage of alleles across a population as observed in both AIRR-seq and genomic data, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and alignment starting at position one of the V germline were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles."
 }else {
-   message = "The plot visualizes the Frequencyand usage of alleles across a population as observed in both AIRR-seq and genomic data, focusing on alleles that meet strict criteria for inclusion in the genotype. Only sequences without mutations in the V region, with a single V allele assignment, and alignment starting at position one of the V germline were considered. For IGHD alleles, additional filtering ensured that sequences had no mutations in the D region and only one assigned D allele. Alleles were retained only if they had a z-score above 0, and for IGHD alleles, the median ratio of observed sequence length to allele length had to exceed 0.5. These stringent criteria ensured that the analysis included only reliable alleles."
+   message = "None of the alleles are present in both the genomic and AIRR-seq datasets."
 }
 ```
 
@@ -168,26 +168,25 @@ if(length(unique(alleles_with_any_counts$allele)) < 1){
 
 ```{r fig.width = 10, fig.height = 10}
 plots = ""
-if (length(unique(alleles_with_any_counts$allele)) > 1) {
+if (length(unique(alleles_with_any_counts$allele)) >= 1) {
    plots <- allele_appearance(data1, imgt_genes, imgt_bag_data)
 }
 
-
 message1 = ""
 
-if(length(plots) < 1){
-  message1 = ""
+if(length(unique(alleles_with_any_counts$allele)) >= 1){
+  message1 = "The usage of each allele across the repertoires in which it appears."
 }else {
-   message1 = "The usage of each allele across the repertoires in which it appears."
+   message1 = ""
 }
 
 
 message2 = ""
 
-if(length(plots) < 1){
-  message2 = ""
+if(length(unique(alleles_with_any_counts$allele)) >= 1){
+  message2 = "Number of Individuals With Allele Presence Across Genomic and Repertoire Datasets."
 }else {
-   message2 = "Number of Individuals With Allele Presence Across Genomic and Repertoire Datasets."
+   message2 = ""
 }
 ```
 

@@ -19,12 +19,19 @@ bag_data[, source := apply(.SD, 1, function(row) {
   paste0(
     unlist(
       mapply(function(col_name, value) {
-        if (value != "") paste(col_name, ": ", value) else NULL
+        if (col_name == "trios" && value != "") {
+          "trios"
+        } else if (value != "" && col_name != "trios") {
+          paste(col_name, ": ", value)
+        } else {
+          NULL
+        }
       }, names(row), row)
     ), 
     collapse = ", "
   )
 }), .SDcols = source_columns]
+
 ```
 
 ```{r}
@@ -143,7 +150,7 @@ DT::datatable(
           }
           details +='<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
           '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
-          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
+          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\">Click here</a>' + // Dynamic hyperlink
 
 
           '</td></tr>';

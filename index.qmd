@@ -30,7 +30,13 @@ bag_data[, source := apply(.SD, 1, function(row) {
   paste0(
     unlist(
       mapply(function(col_name, value) {
-        if (value != "") paste(col_name, ": ", value) else NULL
+        if (col_name == "trios" && value != "") {
+          "trios"
+        } else if (value != "" && col_name != "trios") {
+          paste(col_name, ": ", value)
+        } else {
+          NULL
+        }
       }, names(row), row)
     ), 
     collapse = ", "
@@ -77,6 +83,7 @@ bag_data <- bag_data %>%
   group_by(chain, gene_type, ASC, allele, seq, seq_gapped, Family) %>%
   summarize(
     diffrent_rss = n(),
+      ASC=ASC,
     heptamer_3 = paste(heptamer_3, collapse = ","),
     nonamer_3 = paste(nonamer_3, collapse = ","),
     heptamer_5 = paste(heptamer_5, collapse = ","),
@@ -151,7 +158,7 @@ DT::datatable(
 
           details +='<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
           '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
-          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\" target=\"_blank\">Click here</a>' + // Dynamic hyperlink
+          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\">Click here</a>' + // Dynamic hyperlink
 
 
           '</td></tr>';

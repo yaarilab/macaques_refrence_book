@@ -237,7 +237,20 @@ heatmap_alleles <-function(data_, g_group, allele_db) {
 
 seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") { 
 
-    alignment <- DNAStringSet(msa(sequences, type = "dna"))
+    temp_output <- file("nul", open = "w") # For Windows use "nul", for Linux/macOS use "/dev/null"
+    sink(temp_output, type = "output")
+    sink(temp_output, type = "message")
+
+    # Perform the msa alignment
+    alignment <- msa(sequences, type = "dna")
+
+    # Restore normal output
+    sink(type = "output")
+    sink(type = "message")
+    close(temp_output)
+
+    # Convert msa alignment to DNAStringSet
+    alignment <- DNAStringSet(alignment)
 
     mat_sub <-
       DistanceMatrix(
@@ -296,7 +309,21 @@ seq_align <- function(sequences, alleles, imgt_genes, chain = "IGH") {
 seq_align2 <-function(sequences, alleles, imgt_genes, chain = "IGH") {    
 
 # Assuming you have an allele column in your data
-  alignment <- DNAStringSet(msa(sequences, type = "dna"))
+    temp_output <- file("nul", open = "w") # For Windows use "nul", for Linux/macOS use "/dev/null"
+    sink(temp_output, type = "output")
+    sink(temp_output, type = "message")
+
+    # Perform the msa alignment
+    alignment <- msa(sequences, type = "dna")
+
+    # Restore normal output
+    sink(type = "output")
+    sink(type = "message")
+    close(temp_output)
+
+    # Convert msa alignment to DNAStringSet
+    alignment <- DNAStringSet(alignment)
+
   sequences <- as.character(alignment)  
   
   len <-nchar(sequences[1])
