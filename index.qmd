@@ -11,7 +11,7 @@ This reference book is a collection of insights into the immunoglobulin genes in
 
 The book provides:
 
--   A visual summary of alleles, categorized by gene types, , and Allele-Specific Clusters (ASC).
+-   A visual summary of alleles, categorized by gene types, , and Allele similarity Clusters (ASC).
 
 -   A detailed allele table, including coding and non-coding region information such as RSS and leader sequences.
 

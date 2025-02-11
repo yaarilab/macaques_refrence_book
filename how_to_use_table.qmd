@@ -176,7 +176,7 @@ DT::datatable(
 
 -   **Gene Type** – The gene type (e.g. IGHV)
 
--   **Subgoup** - The subgroup, as assigned by clustering
+-   **Subgoup** - The subgroup, as assigned by hierarchical clustering
 
 -   **ASC (Allele Similarity Clusters)** – The name of the ASC to which this allele has been assigned.
 
