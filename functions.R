@@ -7,12 +7,7 @@ pacman::p_load('dplyr', 'tidyr', 'htmltools', 'bbplot', 'scales', 'data.table', 
 
 
 
-#IGH_df <- read.csv("03_12_IGH_allele_reference_table.csv")
-#IGL_df <- read.csv("03_12_IGL_allele_reference_table.csv")
-#IGK_df <- read.csv("03_12_IGK_allele_reference_table.csv")
-#bag_data <- bind_rows(IGH_df, IGL_df, IGK_df)
-
-bag_data <- fread("usofa_with_rss_and_leader_and_asc_2025-01-04.csv")
+bag_data <- fread("MUSA_with_rss_and_leader_and_asc_2025-02-05.csv")
 setnames(bag_data, "allele", "old_name")
 bag_data[, allele := new_tag]  # Assuming new names match old names
 
@@ -23,22 +18,26 @@ bag_data[, `:=`(
   chain = substr(allele, 1, 3)
 )]
 
-data_ <- fread("filter_20_12_rep_data.csv")
+bag_data <- bag_data[!(bag_data$allele == ""),]
+
+
+data_ <- fread("repertoire_genotype_filter_d_04_02_rep_data.csv")
 setnames(data_, "allele", "old_allele")
 # Update allele in data_ based on bag_data
-data_[, allele := bag_data[match(old_allele, allele_distribution_2024_06_24), new_tag]]
+data_[, allele := bag_data[match(old_allele, old_name), new_tag]]
+data_ <- data_[!is.na(allele)]
+data_[, sum_count := sum(count), by = sample]
 data_[, frac := count / sum_count]
 data_[, frac_allele := count / sum_count]
 
-
-optimized_thresholds_f <- fread("thresholds_table.tsv")
+optimized_thresholds_f <- fread("04_02_thresholds_table.tsv")
 setnames(optimized_thresholds_f, "allele", "old_allele")
-optimized_thresholds_f[, allele := bag_data[match(old_allele, allele_distribution_2024_06_24), new_tag]]
+optimized_thresholds_f[, allele := bag_data[match(old_allele, old_name), new_tag]]
 
 bag_data[, main_allele := ifelse(
-  allele_distribution_2024_06_24 == "" | is.na(allele_distribution_2024_06_24), 
+  allele == "" | is.na(allele), 
   allele, 
-  sub("_.*", "", allele_distribution_2024_06_24)
+  sub("_.*", "", allele)
 )]
 
 

@@ -1,0 +1,215 @@
+---
+title: "How to Use The Allele table?"
+execute:
+  echo: false
+  warning: false
+  message: false
+format: html
+output:
+  html_document:
+    code_folding: hide
+---
+
+The Allele Table provides a structured view of Rhesus macaque immunoglobulin alleles, their characteristics, and their occurrence across different subjects and databases.
+
+You can search for a specific value in any field using the search bar at the top of the table. The table will dynamically filter to display only the alleles that match your search query.
+
+```{r}
+source("functions.R")
+library(dplyr)
+library(plotly)
+library(gridExtra)
+```
+
+```{r}
+# Define the source columns
+source_columns <- c("genbank", "kimdb", "rhgldb+", "imgt", "trios", "vrc", "guo")
+
+# Create the `source` column in data.table
+bag_data[, source := apply(.SD, 1, function(row) {
+  paste0(
+    unlist(
+      mapply(function(col_name, value) {
+        if (col_name == "trios" && value != "") {
+          "trios"
+        } else if (value != "" && col_name != "trios") {
+          paste(col_name, ": ", value)
+        } else {
+          NULL
+        }
+      }, names(row), row)
+    ), 
+    collapse = ", "
+  )
+}), .SDcols = source_columns]
+
+```
+
+```{r}
+library(dplyr)
+
+# Create new columns without renaming the existing ones
+bag_data <- bag_data %>%
+  mutate(
+    nonamer_3 = apply(select(., c("v_nonamer", "d_3_nonamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    heptamer_3 = apply(select(., c("v_heptamer", "d_3_heptamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    nonamer_5 = apply(select(., c("j_nonamer", "d_5_nonamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    }),
+    heptamer_5 = apply(select(., c("j_heptamer", "d_5_heptamer")), 1, function(x) {
+      x <- x[x != "" & !is.na(x)]  # Exclude empty strings and NA
+      if (length(x) > 0) x[1] else NA
+    })
+  )
+```
+
+```{r}
+library(DT)
+
+bag_data <- bag_data %>%
+  select(
+    chain, gene_type, ASC, allele, seq, seq_gapped,
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, Family,iglabel,source, l_part1,l_part2,samples_genomic,samples_AIRRseq
+  ) %>%
+  group_by(chain, gene_type, ASC, allele, seq, seq_gapped, Family) %>%
+  summarize(
+    diffrent_rss = n(),
+      ASC=ASC,
+    heptamer_3 = paste(heptamer_3, collapse = ","),
+    nonamer_3 = paste(nonamer_3, collapse = ","),
+    heptamer_5 = paste(heptamer_5, collapse = ","),
+    nonamer_5 = paste(nonamer_5, collapse = ","),
+    spacer_3 = paste(spacer_3, collapse = ","),
+    spacer_5 = paste(spacer_5, collapse = ","),
+    sample_count_genomic = length(unique(unlist(strsplit(samples_genomic, ", ")))),
+    sample_count_AIRRseq = length(unique(unlist(strsplit(samples_AIRRseq, ", ")))),
+     iglabel = paste0(unique(iglabel), collapse = ", "),
+     source =  paste0(unique(source), collapse = ", "),
+     l_part1 = paste0(unique(l_part1), collapse = ", "),
+      l_part2 = paste0(unique(l_part2), collapse = ", "),
+    .groups = "drop" # Ensures the result is not grouped after summarizing
+  )%>%
+  select(
+    chain, gene_type, ASC, allele, seq, seq_gapped,
+    heptamer_3, nonamer_3, heptamer_5, nonamer_5,
+    spacer_3, spacer_5, sample_count_genomic, sample_count_AIRRseq, Family, diffrent_rss, iglabel,source,l_part1,l_part2
+  )
+
+# Create the table with all columns, but hide additional ones
+DT::datatable(
+  bag_data, # Include all columns
+  options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    columnDefs = list(
+      list(visible = FALSE, targets = c(6:20)) # Hide all columns except the first four
+    )
+  ),
+  callback = JS(
+    "
+    table.on('click', 'tr', function() {
+      var tr = $(this); // Get the clicked row
+      var rowData = table.row(this).data(); // Get all data for the clicked row
+      if (tr.next().hasClass('detail-row')) {
+        // If details row already exists, remove it
+        tr.next().remove();
+      } else {
+        // Construct detailed information using all columns
+        var details = '<tr class=\"detail-row\"><td colspan=\"4\">' +
+          '<strong>Chain:</strong> ' + rowData[1] + '<br>' +
+          '<strong>Gene Type:</strong> ' + rowData[2] + '<br>' +
+          '<strong>Subgoup:</strong> ' + rowData[15] + '<br>' +
+          '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
+          '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
+          '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
+           '<strong>Appears also at:</strong> ' + rowData[18] + '<br>' +
+          '<strong>Number of combinations:</strong> ' + rowData[16] + '<br>' +
+          '<strong>Seq:</strong> ' + rowData[5] + '<br>'
+
+       if (rowData[2].includes('V')) {
+         details += '<strong>Seq Gapped:</strong> ' + rowData[6] + '<br>';
+       } 
+
+      // Include Heptamer/Nonamer and Spacer based on Gene Type
+      if (!rowData[2].includes('V')) {
+        details += '<strong>5 Heptamer:</strong> ' + rowData[9] + '<br>' +
+                   '<strong>5 Nonamer:</strong> ' + rowData[10] + '<br>' +
+                   '<strong>Spacer 5:</strong> ' + rowData[12] + '<br>';
+      }
+      if (!rowData[2].includes('J')) {
+        details += '<strong>3 Heptamer:</strong> ' + rowData[7] + '<br>' +
+                   '<strong>3 Nonamer:</strong> ' + rowData[8] + '<br>' +
+                   '<strong>Spacer 3:</strong> ' + rowData[11] + '<br>';
+      }
+      
+      // Add l_part1 and l_part2 only if rowData[2] contains 'V'
+      if (rowData[2].includes('V')) {
+        details += '<strong>l_part1:</strong> ' + rowData[19] + '<br>' +
+                   '<strong>l_part2:</strong> ' + rowData[20] + '<br>';
+      }
+
+          details +='<strong>Sample Count Genomic:</strong> ' + rowData[13] + '<br>' +
+          '<strong>Sample Count AIRRseq:</strong> ' + rowData[14] + '<br>' +
+          '<strong>More Details about this ASC:</strong> <a href=\"' + rowData[3] + '.html\">Click here</a>' + // Dynamic hyperlink
+
+
+          '</td></tr>';
+        
+        // Insert the details row below the clicked row
+        tr.after(details);
+      }
+    });
+    "
+  )
+)
+```
+
+-   **Chain** – IG chain (e.g. *IGH, IGL, IGK*).
+
+-   **Gene Type** – The gene type (e.g. IGHV)
+
+-   **Subgoup** - The subgroup, as assigned by clustering
+
+-   **ASC (Allele Similarity Clusters)** – The name of the ASC to which this allele has been assigned.
+
+-   **Allele** – The allele name (cluster name plus allele number).
+
+-   **Ig Label** – The unique identifier assigned to the sequence of the core coding region (invariant should ASC assignment change).
+
+-   **Appears Also At** – The other datasets where the allele appears with the names in each dataset.
+
+-   **Number of Combinations** – Number of RSS/Leader sequence combinatons associated with this allele.
+
+-   **Seq** – sequence of the core coding region.
+
+-   **Seq_gapped** - IMGT-gapped sequence of the core coding region (V-genes only).
+
+-   **5' Heptamer** – 5' heptamer sequence.
+
+-   **5' Nonamer** –5' nonamer sequence.
+
+-   **5' Spacer** – 5' spacer sequence.
+
+-   **3' Heptamer** – 3' heptamer sequence.
+
+-   **3' Nonamer** –3' nonamer sequence.
+
+-   **3' Spacer** – 3' spacer sequence.
+
+-   **l_part1** - Leader part 1 sequence (V-genes only).
+
+-   **l_part2** – Leader part 2 sequence (V-genes only).
+
+-   **Sample Count Genomic** – Number of subjects where the allele is detected in genomic data.
+
+-   **Sample Count AIRRseq** – Number of subjects where the allele is detected in AIRR-seq data.
+
+-   **More Details About This ASC** –Link to the ASC page for additional details.

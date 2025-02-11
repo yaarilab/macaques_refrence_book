@@ -1,0 +1,29 @@
+---
+title: "How the Germline Set inffered?"
+execute:
+  echo: false
+  warning: false
+  message: false
+format: html
+output:
+  html_document:
+    code_folding: hide
+---
+
+## Genomic Germline Set
+
+A Genomic Germline Set (GGS) was constructed to serve as a reference for annotating AIRR-seq repertoire data. This set comprised high-confidence alleles identified from individualized reference sets, along with curated germline alleles from established databases. Alleles included in the GGS met stringent criteria, requiring strong genomic evidence and intact recombination signal sequences (RSS) to ensure functionality. Pseudogenes and alleles with incomplete RSS elements were excluded to maintain annotation accuracy.
+
+## Repertoire Germline Set (RGS) Inference
+
+For each subject, AIRR-seq repertoire data were annotated by aligning sequences against the individualized genomic reference set using IgBLAST. The GGS provided a reliable benchmark for allele assignments, facilitating the detection of both known and novel alleles. If an AIRR-seq-derived allele was absent from the GGS but met strict filtering criteria—such as being observed across multiple clonotypes with high sequence identity—it was flagged as a potential novel allele for further validation.
+
+Repertoire Germline Set (RGS) inference, commonly known as genotype inference, was performed using stringent filtering criteria to identify alleles present in each subject’s naive repertoire. Only sequences that met strict quality control requirements were considered for RGS inference. Specifically, sequences were required to:
+
+-   Exhibit no mutations within the V region
+
+-   Have a single V allele assignment
+
+-   Align to the V germline starting at position one
+
+For IGHD RGS inference, additional criteria were applied to ensure accurate allele identification. Only sequences with unmutated D regions and a single assigned D allele were included.

@@ -11,8 +11,7 @@ output:
 ---
 
 ```{r}
-source("functions.R")
-  
+source("functions.R") 
 ```
 
 ```{r}
@@ -126,6 +125,7 @@ DT::datatable(
         var details = '<tr class=\"detail-row\"><td colspan=\"4\">' +
           '<strong>Chain:</strong> ' + rowData[1] + '<br>' +
           '<strong>Gene Type:</strong> ' + rowData[2] + '<br>' +
+          '<strong>Subgoup:</strong> ' + rowData[15] + '<br>' +
           '<strong>ASC:</strong> ' + rowData[3] + '<br>' +
           '<strong>Allele:</strong> ' + rowData[4] + '<br>' +
           '<strong>Ig lable:</strong> ' + rowData[17] + '<br>' +
