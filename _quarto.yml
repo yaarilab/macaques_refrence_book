@@ -30,7 +30,7 @@ website:
         title: "Overview"
         contents:
           - href: index.qmd
-          - href: how_to_read_book.qmd
+          - href: how_to_read_this_book.qmd
           - href: how_to_use_table.qmd
 
       - id: IGH

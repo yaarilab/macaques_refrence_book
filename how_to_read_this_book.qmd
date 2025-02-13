@@ -1,0 +1,27 @@
+---
+title: "How to Read This Book?"
+execute:
+  echo: false
+  warning: false
+  message: false
+format: html
+output:
+  html_document:
+    code_folding: hide
+---
+
+This Reference Book is structured hierarchically to allow for intuitive exploration of Rhesus Macaque immunoglobulin genes. The book is organized as follows:
+
+1.  Each tab represents a different IG chain (e.g., [IGH](IGH.html) , [IGL](IGL.html), [IGK](IGK.html)).
+
+2.  Within each chain
+
+    2.1  The main page have the Allele table([IGH](IGH.html#allele-table), [IGL](IGL.html#allele-table), [IGK](IGK.html#allele-table)) and Allele visual Summary([IGH](IGH.html#Allele-visual-summary), [IGL](IGL.html#Allele-visual-summary), [IGK](IGK.html#Allele-visual-summary)).
+
+    2.2  The main chapters are divided by gene type (e.g., IGHV, IGHD, IGHJ for the heavy chain).
+
+3.  Each gene type is further categorized by subgroup.
+
+4.  Within each subgroup, the book showcases information on different ASCs.
+
+![](show.mp4)

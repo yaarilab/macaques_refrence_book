@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Welcome",
     "section": "",
-    "text": "This reference book is a collection of insights into the immunoglobulin genes in the B cell repertoires of Rhesus macaques (RMs), based on the largest integrated dataset of antibody repertoire and long-read genomic sequencing data from 106 Indian-origin RMs. It explores the dynamics between known and novel alleles, as well as the relationship between expressed and genomic alleles.\nThe book provides:\n\nA visual summary of alleles, categorized by gene types, , and Allele similarity Clusters (ASC).\nA detailed allele table, including coding and non-coding region information such as RSS and leader sequences.\nInteractive graphs and frequency distributions at the ASC level, enabling users to explore allele-specific thresholds, absolute frequencies, zygosity, genotyping summaries, and the relationship between expressed and genomic alleles, providing insights into repertoire diversity and allele selection.\n\nWith a user-friendly interface, the Reference Book enables in-depth exploration of IG data, facilitating research into allele distributions, relationships, and population-level variations in RM immune repertoires.\nFor more details, refer to the preprint: https://www.biorxiv.org/content/10.1101/2025.01.07.631319v1.full.יא"
+    "text": "This reference book is a collection of insights into the immunoglobulin genes in the B cell repertoires of Rhesus macaques (RMs), based on the largest integrated dataset of antibody repertoire and long-read genomic sequencing data from 106 Indian-origin RMs. It explores the dynamics between known and novel alleles, as well as the relationship between expressed and genomic alleles.\nThe book provides:\n\nA visual summary of alleles, categorized by gene types, , and Allele similarity Clusters (ASC).\nA detailed allele table, including coding and non-coding region information such as RSS and leader sequences.\nInteractive graphs and frequency distributions at the ASC level, enabling users to explore allele-specific thresholds, absolute frequencies, zygosity, genotyping summaries, and the relationship between expressed and genomic alleles, providing insights into repertoire diversity and allele selection.\n\nWith a user-friendly interface, the Reference Book enables in-depth exploration of IG data, facilitating research into allele distributions, relationships, and population-level variations in RM immune repertoires.\nFor more details, refer to the preprint: https://www.biorxiv.org/content/10.1101/2025.01.07.631319v1.full"
   },
   {
     "objectID": "nan.html",
@@ -14830,7 +14830,7 @@
     "href": "how_to_read_book.html",
     "title": "How to Read This Book?",
     "section": "",
-    "text": "This Reference Book is structured hierarchically to allow for intuitive exploration of Rhesus Macaque immunoglobulin genes. The book is organized as follows:\n\nEach tab represents a different IG chain (e.g., IGH, IGL, IGK).\nWithin each chain\n\nThe main page have the Allele table and Allele visual Summary\nThe main chapters are divided by gene type (e.g., IGHV, IGHD, IGHJ for the heavy chain).\n\nEach gene type is further categorized by gene family.\nWithin each subgroup, the book showcases information on different ASC.\n\n\n\n\nIGH\nIGL\nIGK\n\n\n\n\nAllele table\nAllele table\nAllele table\n\n\nAllele visual Summary\nAllele visual summary\nAllele visual summary\n\n\n\nVideo"
+    "text": "This Reference Book is structured hierarchically to allow for intuitive exploration of Rhesus Macaque immunoglobulin genes. The book is organized as follows:\n\nEach tab represents a different IG chain (e.g., IGH , IGL, IGK).\nWithin each chain\n\nThe main page have the Allele table(IGH, IGL, IGK) and Allele visual Summary(IGH, IGL, IGK).\nThe main chapters are divided by gene type (e.g., IGHV, IGHD, IGHJ for the heavy chain).\n\nEach gene type is further categorized by subgroup.\nWithin each subgroup, the book showcases information on different ASCs.\n\nVideo"
   },
   {
     "objectID": "how_to_use_table.html",
@@ -14887,5 +14887,12 @@
     "title": "How the Germline Set inffered?",
     "section": "Repertoire Germline Set (RGS) Inference",
     "text": "Repertoire Germline Set (RGS) Inference\nFor each subject, AIRR-seq repertoire data were annotated by aligning sequences against the individualized genomic reference set using IgBLAST. The GGS provided a reliable benchmark for allele assignments, facilitating the detection of both known and novel alleles. If an AIRR-seq-derived allele was absent from the GGS but met strict filtering criteria—such as being observed across multiple clonotypes with high sequence identity—it was flagged as a potential novel allele for further validation.\nRepertoire Germline Set (RGS) inference, commonly known as genotype inference, was performed using stringent filtering criteria to identify alleles present in each subject’s naive repertoire. Only sequences that met strict quality control requirements were considered for RGS inference. Specifically, sequences were required to:\n\nExhibit no mutations within the V region\nHave a single V allele assignment\nAlign to the V germline starting at position one\n\nFor IGHD RGS inference, additional criteria were applied to ensure accurate allele identification. Only sequences with unmutated D regions and a single assigned D allele were included."
+  },
+  {
+    "objectID": "how_to_read_this_book.html",
+    "href": "how_to_read_this_book.html",
+    "title": "How to Read This Book?",
+    "section": "",
+    "text": "This Reference Book is structured hierarchically to allow for intuitive exploration of Rhesus Macaque immunoglobulin genes. The book is organized as follows:\n\nEach tab represents a different IG chain (e.g., IGH , IGL, IGK).\nWithin each chain\n2.1 The main page have the Allele table(IGH, IGL, IGK) and Allele visual Summary(IGH, IGL, IGK).\n2.2 The main chapters are divided by gene type (e.g., IGHV, IGHD, IGHJ for the heavy chain).\nEach gene type is further categorized by subgroup.\nWithin each subgroup, the book showcases information on different ASCs.\n\nVideo"
   }
 ]
