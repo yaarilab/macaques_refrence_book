@@ -1066,7 +1066,7 @@ website:
 format:
   html:
     theme: [Journal]
-    css: [style.css, index.css]
+   # css: [style.css, index.css]
     toc: true
     code-copy: true
     code-overflow: wrap
