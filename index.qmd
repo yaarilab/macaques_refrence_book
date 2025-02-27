@@ -19,4 +19,6 @@ The book provides:
 
 With a user-friendly interface, the Reference Book enables in-depth exploration of IG data, facilitating research into allele distributions, relationships, and population-level variations in RM immune repertoires.
 
+To access the full alleles list and information, refer to https://github.com/ayeletperes/musa/blob/main/MUSA/MUSA_with_rss_and_leader_and_asc_2025-02-05.csv
+
 For more details, refer to the preprint: https://www.biorxiv.org/content/10.1101/2025.01.07.631319v2
