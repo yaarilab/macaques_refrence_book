@@ -7,7 +7,7 @@ pacman::p_load('dplyr', 'tidyr', 'htmltools', 'bbplot', 'scales', 'data.table', 
 
 
 
-bag_data <- fread("MUSA_with_rss_and_leader_and_asc_2025-02-05.csv")
+bag_data <- fread("MUSA_with_rss_and_leader_and_asc_2025-07-24.csv")
 setnames(bag_data, "allele", "old_name")
 bag_data[, allele := new_tag]  # Assuming new names match old names
 
@@ -21,12 +21,14 @@ bag_data[, `:=`(
 bag_data <- bag_data[!(bag_data$allele == ""),]
 
 
-data_ <- fread("repertoire_genotype_filter_d_04_02_rep_data.csv")
+data_ <- fread("repertoire_genotype_filter_d.csv")
 setnames(data_, "allele", "old_allele")
 # Update allele in data_ based on bag_data
+
 data_[, allele := bag_data[match(old_allele, old_name), new_tag]]
+
 data_ <- data_[!is.na(allele)]
-data_[, sum_count := sum(count), by = sample]
+data_[, sum_count := sum(count), by = subject]
 data_[, frac := count / sum_count]
 data_[, frac_allele := count / sum_count]
 
@@ -60,6 +62,10 @@ optimized_thresholds[, threshold := fifelse(
   ),
   threshold
 )]
+
+bag_data <- bag_data %>%
+select(-old_name)
+
 
 
 allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
@@ -135,7 +141,7 @@ allele_appearance <- function(data_, imgt_genes,imgt_bag_data, chain = "IGH") {
   
   p <- ggplot(data_, 
        aes(x = allele, y = frac_allele,
-           text = paste0("sample: ", sample))) +
+           text = paste0("sample: ", subject))) +
     geom_boxplot() + # Add boxplot to show the distribution
     geom_point(data = subset(data_, frac_allele != 0), 
                aes(color = factor(frac_allele != 0)), # Add color aesthetic if needed
@@ -179,21 +185,22 @@ heatmap_alleles <-function(data_, g_group, allele_db) {
     
     alleles <- data_$allele
     data_$imgt_call <- data_$allele
+    
     data_upset <- data_ %>%
-      select(sample, imgt_call, frac) %>%
-      group_by(sample) %>%
+      select(subject, imgt_call, frac) %>%
+      group_by(subject) %>%
       dplyr::mutate(frequency = sum(as.numeric(frac) / n(), na.rm = T),
                     val = 1, 
-                    text = paste("</br>sample: ", sample,
+                    text = paste0("</br>sample: ", subject,
                                  "</br>Alleles: ", paste0(sort(unique(imgt_call)), collapse = ","),
                                  "</br>Frequency: ", unique(frequency)),
-                    text2 = paste("</br>Alleles: ", paste0(sort(unique(imgt_call)), collapse = ","))) %>%
+                    text2 = paste0("</br>Alleles: ", paste0(sort(unique(imgt_call)), collapse = ","))) %>%
       select(-frac) %>%
+      distinct(subject, imgt_call, .keep_all = TRUE) %>% 
       pivot_wider(names_from = imgt_call, 
-                  values_from = val, 
-                  values_fill = list(val = 0))
-    
-    
+                  values_from = val)
+
+    data_upset[is.na(data_upset)] <- 0
     
     t<-setNames(data_$imgt_call,data_$imgt_call)
     missing_alleles <- names(t)[!(t) %in% colnames(data_upset[,5:ncol(data_upset)])]
